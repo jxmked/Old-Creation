@@ -1,0 +1,581 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
+
+<html>
+<head>
+	<title>Binary Converter</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<style type="text/css">
+		body, .dw {
+			max-width: 480px;
+			min-width: 240px;
+		}
+		body {
+			margin: auto;
+			white-space: nowrap;
+		}
+		table, tr, td {
+			border: 0;
+			border-collapse: collapse;
+		}
+		table{
+			width: 98%;
+			margin: auto;
+		}
+		.btn-field {
+			width: 100%;
+			margin: 2px 0 0 0;
+		}
+		.inp-area {
+			line-height: 13px;
+			font-family: monospace;
+			overflow: scroll;
+		}
+		#toggle-btn {
+			margin: 3px;
+			background-color: #efefef; 
+			width: 60px;
+			height: 30px;
+			border-radius: 15px;
+			border: 3px solid #e1e1e1;
+			position: relative;
+			transition: all .5s ease-in-out;
+		}
+		#toggle-btn:hover{
+			border: 3px solid #00b7f0;
+		}
+		#toggle {
+			width: 25px;
+			height: 100%;
+			border-radius: 15px;
+			background-color: #00b7f0;
+			position: relative;
+		}
+		.toggle-text {
+			width: 100%;
+			margin: 0;
+			padding: 0;
+			text-align: center;
+		}
+		.toggle-text > div {
+			position: relative; 
+			margin: 0;
+			font-size: 15px;
+			font-weight: 5%;
+			width: 100%;
+			text-align: center; 
+		}
+		.toggle-table {
+			width: 100%;
+		}
+		.toggle-table > tbody > tr > td:nth-child(2) {
+			width: 40%;
+			text-align: center;
+		}
+		.schar {
+			width: 30px;
+			border: 1px solid #e1e1e1;
+		}
+		span[data='on'], span[data='on']:hover, span[data='on']:focus{
+			background-color: #ffb700;
+			border: 1px inset #f00000;
+		}
+		#out{
+			color: #0f0f0f;
+			background-color: #f5f5f5;
+			overflow: scroll;
+		}
+		#menu_btn {
+			float: left;
+			z-index: 9999;
+			position: fixed;
+			left: 2px;
+			top: 7px;
+			border-radius: 10px;
+			padding: 5px 7px 5px 7px;
+			background-color: rgba(7,253,202, 0.3);
+		}
+	</style>
+		<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+	<script src="jquery-1.12.2.min.js"></script>
+	<!--<script src="helpers.js"></script>-->
+</head>
+<body>
+	<div style="margin: 0 2px 10px 2px; border: 1px solid #eeeeee; border-radius: 0 0 15px 15px;" class="nav text-center bg-info">
+		<div id="menu_btn" style="display:none">Back</div>
+		<h4 class="">Binary Converter</h4>
+	</div>
+
+	<div class="container dw">
+		<div class="col-sm-12 col-xs-12 col-md-10">
+
+			<!--User Input-->
+			<div class="row">
+				<div class="form-group">
+					<textarea id="inp" class="form-control inp-area" max="1920" rows="7" autofocus></textarea>
+				</div>
+			</div>
+
+			<!--Navigation Buttons and Extras-->
+			<div class="row">
+				<div class="panel">
+					<table class="toggle-table">
+						<tr>
+							<td>
+
+								<!--Switch between Auto and Manual-->
+								<div id="toggle-btn" class="">
+									<div id="toggle"></div>
+								</div>
+							</td>
+							<td>
+
+								<!-- Mode for switch Between Auto and Manual -->
+								<div class="toggle-text">
+									<div id="toggle-text-b">Auto Detect</div>
+									<div id="toggle-text-a">Manual</div>
+								</div>
+							</td>
+							<td>
+
+								<!-- Buttons For 'Convert', 'To Str', 'To Bin' -->
+								<div class="btn btn-group">
+									<button  class="btn btn-default btn-sm" id="aut">Convert</button>
+									<button  class="btn btn-default btn-sm" id="man">To Str</button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3">
+								<table>
+									<tr>
+										<td>
+
+											<!-- Button for Feature 'Space', 'Custom' -->
+											<div class="btn btn-group">
+												<span data="off" id="spc" class="btn btn-sm btn-default btn-toggle">Space</span>
+												<span data="off" id="cus" class="btn btn-sm btn-default btn-toggle">Custom</span>
+											</div>
+										</td>
+										<td>
+
+											<!--Inputs for custom 1 & 0. Only accessible if 'Custom' button is on -->
+											<div class="">
+												<div>
+													<span>1 => <input class="schar" type="text" max="1" value="1" disabled="disabled" /></span>
+												</div>
+												<div>
+													<span>0 => <input class="schar" type="text" max="1" value="0" disabled="disabled" /></span>
+												</div>
+											</div>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+
+			<!--Output -->
+			<div class="row">
+				<div class="panel">
+					<textarea id="out" class="form-control" rows="7"></textarea>
+				</div>
+			</div>
+
+			<!--Blockqoute-->
+			<div class="row">
+				<div class="panel text-center">
+					<h4>Dev: xCreat10n</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+'use strict'
+
+var s = "auto";	 //Toggle 
+var input = $("#inp");
+var ioa = "1", iob = "0";
+
+var type = "toStr";
+
+//Defaults
+var defI = "1";
+var defO = "0";
+var defS = " ";
+var binLen = 8;
+
+/** Users' Buttons and inputs interactions and events **/
+input.keyup(keyUp); //TextArea input onKeyUp event
+$("#aut").click(keyUp); //'Convert' & 'toBin' click Event Listener
+
+//Auto Trigger for... after loading the page
+//(For default value)
+$(document).ready(function(){
+	toggle(s);
+}); //End auto trigger
+
+$("#man").click(manBin);
+$("#aut").click(manStr);
+
+//Toggle for Auto & Manual
+$("#toggle-btn").click(function() {
+
+	s = (s == "auto") ? "manual" : "auto";
+
+	toggle(s);
+}); //End OnClick of #toggle-btn
+
+//Toggle for Space & Custom
+$(".btn-toggle").click(function() {
+	
+	var tog = ($(this).attr("data") == "off") ? "on" : "off";
+	
+	$(this).attr("data", tog);
+
+	if(this.innerText == "Custom") {
+
+		if(tog == false) {
+			$(".schar").attr("disabled", "disabled");
+
+		} else {
+			$(".schar").removeAttr("disabled");
+
+		} //End add & remove disability for custom 1 & 0
+	} //End if the text from element is custom
+
+	if(s == "auto") {
+
+		keyUp(); //Auto method function
+
+	} else {
+
+		if(type == "toBin") {
+
+			manStr(); //Manual Binary to string function
+
+		} else {
+
+			manBin(); //Manual String to Binary function
+
+		 }//End If type is toBin
+	} //End if s is Auto
+}); //End .btn-toggle function
+
+/** End of Users' buttons and inputs Interactions and Events **/
+
+//Manual methods
+function manBin() {
+
+	$("#toggle-text-a").text("Manual");
+
+	if(s == "manual" && $("#aut").text() == "To Bin") {
+
+		type = "toStr";
+
+		var val = $("#inp").val(); //TextArea value
+
+		if(isBin(val)) {
+			render(toStr(val));
+		} else {
+		 	$("#toggle-text-a").text("It is not a binary.");
+		}//If is true binary
+	} //If s is set to manual
+} //end manBin
+
+function manStr() {
+
+ 	$("#toggle-text-a").text("Manual");
+
+	if(s == "manual" && ($("#aut").text() == "To Bin")) {
+
+		type = "toBin";
+
+		render(toBin($("#inp").val()));
+
+	}//If s is set to manual
+} //End manStr
+//End manual method
+
+function keyUp() {
+
+	var val = $("#inp").val(); //TextArea value
+
+	var res = [];
+
+ 	$("#toggle-text-a").text("Manual");
+
+	if(s == "auto") {
+		//Auto detect method 
+		
+		if(isBin(val) && val.length >= 8) {
+			val = val.split(" ").join(""); //Remove spaces
+			res = toStr(val);
+			type = "toStr";
+		} else {
+			res = toBin(val);
+			type = "toBin";
+		} //end if true binary
+
+		//Finalize
+		render(res);
+	} //end for auto and manual toggle
+}
+
+/** Helpers **/
+function isBin(str) {
+
+	//Check If Custom 1 & 0 is on and Use it.
+	//I don't know how to do thi in jQuery so I did this...
+	var a = ($("#cus").attr("data") == "on") ? document.getElementsByClassName("schar")[0].value : defI;
+	var b = ($("#cus").attr("data") == "on") ? document.getElementsByClassName("schar")[1].value : defO;
+
+	var arr = [a, b, defS]; //Char to check in Array
+
+	for(var i in str) {
+		if((arr.indexOf(str.charAt(i)) == -1)) {
+			return false;
+		} //End If char from string is not found on Array list
+	} //End for loop extract each char from string
+
+	return true;
+} //End isBin
+
+/**Main Function. Translator**/
+
+//String to binary
+function toBin(string) {
+
+	return string.split('').map(function(char) {
+
+		//Translate Each ASCII char to 8 Bit Binary
+		var bin = char.charCodeAt(0).toString(2);
+
+		// toString(2) returns an integer so
+		//There is no '0' at the beginning of a single 8bit binary
+		//That giving a not exact length of a single 8 bit binary
+		if(bin.length != binLen) {
+			var zero = "";
+
+			for(var i = 0; i < (binLen - bin.length); i++) {
+				zero += "0";
+			} //End For loop add zero
+
+			return  zero + bin.toString();
+		} //End if bin
+
+		return bin;
+	}); //End Map function to translate ASCII to binary
+} //End Tobin
+
+//Binary to string
+function toStr(str) {
+
+	var strb; 
+
+	//Check If Custom 1 & 0 is on and Use it.
+	//I don't know how to do this in jQuery so I did this...
+	ioa = ($("#cus").attr("data") == "on") ? document.getElementsByClassName("schar")[0].value : defI;
+	iob = ($("#cus").attr("data") == "on") ? document.getElementsByClassName("schar")[1].value : defO;
+
+	if((str.indexOf(defI) == -1 && str.indexOf(defO) == -1) && (ioa != iob)) {
+
+		while(((str.indexOf(ioa) != -1) || (str.indexOf(iob) != -1))) {
+
+			str = str.replace(ioa, defI);
+			str = str.replace(iob, defO);
+
+		} //End While
+	} //End if 
+
+	if((str.indexOf(defS) == -1) /* && checkToBin(str) /**/) {
+		
+		strb = (str.length <= 0) ? [] :  spliceToBin(str, binLen); 
+
+	} else {
+
+		strb = str.split(defS);
+
+	} //End if no spaces & is binary
+
+	return strb.map(function(bin) {
+
+		//Translate binary to ASCII chars
+		return String.fromCharCode(parseInt(bin, 2));
+
+	}).join("");; //End Map Function
+
+} //End toStr
+
+/**End Translator**/
+
+//Long Binary string without spaces will break to 8 chars
+//Return array
+function spliceToBin(str, len) {
+	var res = []; //Store an 8 bit string here 
+	var pos = 0; //Current position 
+
+	if(str.length == len) return [str];
+
+	while(true) {
+
+		var tmp = str.substr(pos, len);
+
+		if(tmp.length == len) {
+			res.push(tmp);
+			pos += len;
+
+			continue; 
+		} //End if length of tmp is match from given len & there is no spaces (To be sure)
+
+		break;
+
+	} //End while true
+
+	return res;
+} //End spliceToBin
+
+//Check if the given binary is in exact length
+function checkToBin(str, bits) {
+	//I don't have internet to found out if it is a float or not...
+	return ((str.length / bits).toString().indexOf(".") == -1);
+} //End checkToBin
+
+function render(str) {
+
+		//Other feature
+	if(type == "toBin") {
+
+		//Check If Custom 1 & 0 is on and Use it.
+		//I don't know how to do thi in jQuery so I did this...
+		ioa = ($("#cus").attr("data") == "on") ? document.getElementsByClassName("schar")[0].value : defI;
+		iob = ($("#cus").attr("data") == "on") ? document.getElementsByClassName("schar")[1].value : defO;
+
+		//Spacing Feature
+		//Add or Remove Spaces...
+		str = (($("#spc").attr("data") != "on")) ? str.join(defS) : str.join("");
+
+		//Translate 1 & 0 to custom feature
+		var arr = [defO, defI]; //Unavailable chars
+
+		if(	($("#cus").attr("data") == "on") && (str.length > 0) ) {
+
+			//Only Single Char is Available
+			if(	(ioa.length == 1) && (iob.length == 1) && (ioa != iob) && ((arr.indexOf(ioa) == -1) && (arr.indexOf(iob) == -1))) {
+
+				while((str.indexOf(defI) != -1) || (str.indexOf(defO) != -1)) {
+					str = str.replace(defI, ioa);
+					str = str.replace(defO, iob);
+				} //End while 
+			} //End single Char only && Except 1 & 0 are available && ioa is not equal to iob
+		} //End toggle Custom Feature
+
+		$("#spc").removeClass("alert-danger");
+		$("#out").val(str); //Output
+
+		return; //Halt 
+	} //End to bin
+
+	$("#spc").addClass("alert-danger");
+	$("#out").val(str); //Output
+
+} //End render
+
+function toggle(index) {
+
+	if(index == "manual") {
+
+		$("#toggle").animate({left:"55%"}, 400);
+		$("#toggle").css("background-color", "#f05050");
+		$("#toggle-text-b").fadeOut(0); //'Auto Detect' Text
+		$("#toggle-text-a").fadeIn(500); //'Manual' Text
+
+		//Remove Disability of 'To Str' button
+		//Change to 'To Bin' the 'Convert' button
+		$("#man").removeAttr("disabled"); 
+		$("#aut").text("To Bin");
+
+	} else {
+
+		$("#toggle").animate({left:"0%"}, 400);
+		$("#toggle").css("background-color", "#00b7f0");
+		$("#toggle-text-a").fadeOut(0); //'Manual' Text
+		$("#toggle-text-b").fadeIn(500); //'Auto detect' text
+
+		//Disable 'To Str' button
+		//Change to 'Convert' the 'To bin' button
+		$("#man").attr("disabled", "disabled"); 
+		$("#aut").text("Convert");
+
+	} //End if
+} //End Toggle
+
+/***Added Feature to back to xCreat10n Home page*****/
+function get(index){
+	var res = {};
+	var url = window.location.toString();	
+	url.substr(url.indexOf("?") + 1).split("&").map(function(item){
+		var val = item.split("=");
+		res[val[0]] = val[1];
+	}); return res[index];
+}
+
+$(document).ready(function(){
+	var loc = get("loc");
+	if(loc){
+		$("#menu_btn").removeAttr("style");
+
+		$("#menu_btn").click(function(){
+			var res = loc.substr(1).split("%").map(function(hex) {
+				return String.fromCharCode(parseInt(hex, 16));
+			}).join("");
+			window.location = res;
+		});
+	}
+});
+
+/**** Note
+
+Date Started at June 18, 2020
+Date Completed at June 21, 2020
+
+****Version****
+Modified at June 30, 2020. v4.0 {
+	Added back to homepage feature
+	Clean some messy blocks
+}
+
+****Denug & Fixed****
+Debug & Fixed at June 24, 2020
+Debug & Fixed at june 25, 2020
+
+Author Jovanni De Guia
+
+Main Function
+	ASCII to Binary
+	Binary to ASCII
+	
+Note about Buttons
+	-Convert = (Only shows if The switch (Auto/Manual) is set to Auto)
+	-To Bin = (Only shows if The switch (Auto/Manual) is set to Manual)
+	-To Str = (Only available if The switch (Auto/Manual) is set to Manual)
+
+	-Space = Add spaces between 8 bit Binary (Cannot apply on String (which is not a binary)
+	-Custom = (Fill up the two inputs for custom 1 & 0) Use Custom 1 & 0 (Ex. 1 > A & 0 > B).
+****/
+</script>
+</html>

@@ -1,0 +1,467 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
+
+<html>
+<head>
+	<title>Roman Numerals</title>
+	<link rel="stylesheet" href="bootstrap.min.css" />
+	<style type="text/css">
+		body, .dw{
+			max-width: 480px;
+			min-width: 240px;
+		}
+		body {
+			margin: auto;
+			white-space: nowrap;
+		}
+		#menu_btn {
+			float: left;
+			z-index: 9999;
+			position: fixed;
+			left: 2px;		
+			top: 7px;
+			border-radius: 10px;
+			padding: 5px 7px 5px 7px;
+			background-color: rgba(7,253,202, 0.3);
+		}
+		table{
+			width: 98%;
+			margin: auto;
+		}
+		table, tr, td {
+			border: 0;
+			border-collapse: collapse;
+			text-align: center;
+		}
+		.nav-btn[data='on'] {
+			border: 1px inset #f00000;
+		}
+		.xtest {
+			margin: 0 auto 0 auto;
+			padding: 0;
+			border: 0;
+		}
+	</style>
+			<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+	<script src="jquery-1.10.2.min.js"></script>
+	<!--<script src="helpers.js"></script>-->
+</head>
+<body>
+	<div style="margin: 0 2px 10px 2px; border: 1px solid #eeeeee; border-radius: 0 0 15px 15px;" class="nav text-center bg-info">
+		<div id="menu_btn" style="display:none">Back</div>
+		<h4 class="">Roman Numerals Converter</h4>
+	</div>
+	
+	<div class="container dw">
+		<div class="col-sm-12 col-xs-12 col-md-10">
+			
+			<!--Input area-->
+			<div class="row">
+				<div class="panel">
+					<input class="form-control" id="input" type="text" autofocus/>
+				</div>
+			</div>
+			
+			<!--Buttons And Navigation area -->
+			<div class="row">
+				<div class="panel">
+					<table style="position: relative; z-index: 999; margin: 0 0 10px 0;">
+						<tr>
+							<td>
+							
+								<!-- Buttons Spaces, Upper or Lower cases, Random Cases -->
+								<div class="xtest btn btn-group btn-group-sm">
+									<button id="spc" data="off" class="xbtn nav-btn btn btn-default">SPC</button>
+									<button id="ul" data="off" class="xbtn nav-btn btn btn-default">U/L</button>
+									<button id="rcs" data="off" class="xbtn nav-btn btn btn-default">RCS</button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td>
+							
+								<!-- Button convert-->
+								<span class="xtest btn btn-group btn-group-sm">
+									<button class="btn btn-default btn-sm alert-info" id="btn" style="width: 100%; text-transform: uppercase;">Convert</button>
+								</span>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			
+			<!--Output area -->
+			<div class="row">
+				<div class="panel">
+					<div class="blockqoute">
+						<h5>Output:&nbsp;
+							<span id="out-type"></span>
+						</h5>
+					</div>
+					<textarea class="form-control" rows="7" id="output"></textarea>
+				</div>
+			</div>
+			
+			<!--Blockqoute-->
+			<div class="row">
+				<div class="panel text-center">
+					<h4>Dev: xCreat10n</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript">
+'use strict'
+
+var limits = 1000000; //Max limit for int to Roman
+
+var roman = [
+	{"num" : 1000, "char" : "M"},
+	{"num" : 900, "char" : "CM"},
+	{"num" : 500, "char" : "D"},
+	{"num" : 400, "char" : "CD"},
+	{"num" : 100, "char" : "C"},
+	{"num" : 90, "char" : "XC"},
+	{"num" : 50, "char" : "L"},
+	{"num" : 40, "char" : "XL"},
+	{"num" : 10, "char" : "X"},
+	{"num" : 9, "char" : "IX"},
+	{"num" : 5, "char" : "V"},
+	{"num" : 4, "char" : "IV"},
+	{"num" : 1, "char" : "I"}
+]; //sorted from higher to lowest
+//Num must be an Integer & char must be written on uppercase
+
+//Must be written on Uppercase
+var romanChar = "MDCLXVI".split("");
+
+var btnRules = {
+	"spc"	: [],
+	"ul"	: ["rcs"],
+	"rcs"	: ["ul"]
+};
+
+var type = "number";
+var lever = false;
+
+function run() {
+
+	var val = $("#input").val();
+
+	//Remove spaces and ',-'
+	var str = rmThis(val, " ,-");
+
+	var num = Math.floor(parseInt(str));
+
+	var res = ""; 
+
+	//If we parse to Int letter, the results will be...
+	if((num.toString() == "NaN")) {
+		//Possible Roman **
+		//Roman to Int...
+
+		if(romanCheck(str)) {
+			//True Roman string
+
+			type = "number";
+
+			$("#out-type").text("Number");
+
+			res = toNum(str);
+
+		} else {
+			//Not a Roman String
+
+			//If the string from input is not a Roman Numerals
+			//Output it with helpers (U/L, RCS, Spaces)
+			type = "roman"; 
+
+			$("#out-type").text("String");
+
+			res = val.split("");
+		} //End If
+
+	} else {
+		//Sure Integer **
+		//Int to Roman
+
+		type = "roman";
+
+		res = limit(num);
+
+		if((!res)) {
+			//Equal or below max limit
+			$("#out-type").text("Roman");
+
+			res = toRoman(num);
+
+		} else {
+			//Limitation exceeded
+			$("#out-type").text("Warning Message");
+
+			type = false;
+		} //end If
+
+	} //End If number string is equal to 'NaN'
+
+	if((((str == "") || (str == null)) || (val[0] == "0"))) {
+
+		res = "";
+		type = "";
+
+		$("#out-type").text("Null");
+
+	} //End if
+
+	xbtn();
+	render(res); //Finalize and apply some feature
+}
+
+function xbtn() {
+
+	//Adding red = Indicating of not available
+	if((type == "number")) {
+		$(".xbtn").addClass("alert-danger");
+		$(".xbtn").map(function(index) {
+			$(this).attr("data", "off");
+		}); //End Map
+
+	} else {
+
+		$(".xbtn").removeClass("alert-danger");
+
+	} //End If
+} //End xbtn Function
+
+function render(val) {
+
+	if(((type == "roman") && (typeof val == "object"))){
+
+		//Available only if Uppercase/Lowercase Toggle is off
+		if((($("#rcs").attr("data") == "on") && ($("#ul").attr("data") == "off"))) {
+
+			val = val.map(function(char) {
+
+				if(((Math.floor(Math.random() * 10)) > 5)) {
+					return char.toString().toUpperCase();
+				} //End if Random number is greater than 5
+
+				return char.toString().toLowerCase();
+
+			}); //End map function
+		} //End if random Cases is On
+
+		//Default: without spaces. With or without spaces
+		val = (($("#spc").attr("data") == "on")) ? val.join(" ") : val.join("");
+
+		//Available only if Random Cases is Off.
+		//Default: Uppercase.  Lowercase or uppercas
+		val = ((($("#ul").attr("data") == "on") && ($("#rcs").attr("data") == "off"))) ? val.toLowerCase() : val;
+
+	} //End if the variable type is equal to roman
+
+	val = ((typeof val != "string")) ? val.toString() : val;
+
+	$("#output").val(val);
+}
+
+/** Main functions. Translator **/
+
+//Roman To Number 
+function toNum(str) {
+
+	var lastNum = 0;
+	var num = 0; 
+
+	str.split("").map(function(char) {
+		for(var index in roman) {
+			if((char.toUpperCase() == roman[index].char)) {
+				num += (lastNum < roman[index].num && num != 0) ? roman[index].num - (lastNum * 2) : roman[index].num;
+
+				lastNum = roman[index].num;
+				break; 
+			} //End if roman type char from str is same to roman char
+		} //End for loop
+	}); //End Map
+
+	return num;
+} //End toNum
+
+//Number to Roman
+//Return Array 
+function toRoman(num) {
+	num = parseInt(num); //To Be sure :)
+	
+	if( (num <= 0) ){ 
+		return ""; 
+	} //There is no Roman Characters/Symbol for '0' zero
+
+	var res = [];
+
+	while(true) {
+		if(num <= 0) break; 
+
+		for(var index in roman) {
+
+			if((num >= roman[index].num)) {
+
+				res.push(roman[index].char)
+				num -= roman[index].num;
+				break;
+			} //End If num is equal or greater than Roman Number
+		} //End for index I  Roman
+	} //End While True
+
+	return res;
+} //End from Number to Roman
+
+/**End Translator **/
+
+//Remove from str
+function rmThis(str, val) {
+
+	if((val.length > 1)) {
+
+		var arr = val.split("");
+
+		for(var i in arr) {
+
+			str = str.split(arr[i]).join("");
+
+		} //End for i in arr
+
+		return str;
+	} //End if val length is greater than 1
+
+	return str.split(val).join(""); //Single char
+} //End rmThis
+
+/*** Max Limit ***/
+function limit(num) {
+
+	if((num > limits)) {
+
+		//Maximum Exceeded
+		return "Maximum Exceeded: " + limits;
+
+	} //End if maximum limit overlap on num
+} //End Limit function
+
+//Check all characters from users' input if it a roman or not...
+function romanCheck(str) {
+
+	str = str.split(" ").join(""); //Remove Spaces
+
+	//Since our romanChar is written on upper case, we need to translate all 
+	//String from str variable to uppercase too.
+	str = str.toUpperCase(); 
+
+	//Find & check all chars from str if they are in romanchar list
+	for(var index in str) {
+
+		if((romanChar.indexOf(str.charAt(index)) == -1)) {
+
+			return false; //If the char is not in-list, it is not a roman 
+
+		} //End if
+	} //End For loop
+
+	return true; //If all chars from str is in-list of romanChar...
+} //End romanCheck
+
+/***Added Feature to back to xCreat10n Home page*****/
+function get(index){
+	var res = {};
+	var url = window.location.toString();	
+	url.substr(url.indexOf("?") + 1).split("&").map(function(item){
+		var val = item.split("=");
+		res[val[0]] = val[1];
+	});
+	return res[index];
+}
+
+$(document).ready(function(){
+	var loc = get("loc");
+	if(loc){
+		$("#menu_btn").removeAttr("style");
+
+		$("#menu_btn").click(function(){
+			var res = loc.substr(1).split("%").map(function(hex) {
+				return String.fromCharCode(parseInt(hex, 16));
+			}).join("");
+			window.location = res;
+		});
+	}
+});
+
+/***Event Listeners***/
+
+/** Nav-BTN event**/
+$(".nav-btn").click(function(e) {
+
+	if(($(this).attr("data") == "on")) {
+
+		$(this).attr("data", "off")
+
+	} else {
+
+		/**Turn off some feature before turning on the requested btn**/
+		if(((typeof btnRules[$(this).attr("id")]) != "undefined")) {
+
+			btnRules[($(this).attr("id"))].map(function(index) {
+				$("#" + index).attr("data", "off");
+			}); //End Map
+		} //End if
+
+		$(this).attr("data", "on")
+	} //End if data attribute from target .nav-btn is on...
+
+	run();
+}); //End Nav-btn click event function
+
+$("#input").keyup(run); //Input field
+$("#btn").click(run); //Convert Btn
+
+/****Notes 
+Started at June 22, 2020
+Completed at June 23, 2020
+
+****Version info****
+Modified at June 29, 2020. v4.0
+	-Added Back to Homepage Button
+
+**** Debug and Fixed ****
+
+Author Jovanni De Guia
+
+Frameworks JQuery & Bootstrap Css
+
+Main function of this page.
+	Translate Roman Numerals to Integer
+	Translate Integer to Roman Numerals
+
+Notes about Buttons
+-SPC = Spacing
+	Add spaces between Roman characters
+
+-U/L = Uppercase/Lowercase
+	Use Lowercase instead of Uppercase
+
+-RCS = Random Cases
+	Randomize the Cases of each Characters (I just wanted to add. Hahaha)
+
+****/
+</script>
+</html>

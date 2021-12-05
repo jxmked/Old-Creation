@@ -1,0 +1,201 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<html>
+<head>
+	<title>Hex Converter</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<style type="text/css">
+		body, .dw{
+			max-width: 480px;
+			min-width: 240px;
+		}
+		body {
+			margin: 0 auto 0 auto;
+			white-space: nowrap;
+		}
+		#input,  #output {
+			line-height: 9px;
+			font-size: 2px;
+			font-family: monospace;
+		}
+	</style>
+	<script src="jquery-1.10.2.min.js"></script>
+	<script src="helpers.js"></script>
+
+</head>
+<body>
+	<div style="margin: 0 2px 10px 2px; border: 1px solid #eeeeee; border-radius: 0 0 15px 15px;" class="nav text-center bg-info">
+		<h4 class="">CSS Beautifier<sub>Beta</sub></h4>
+	</div>
+	
+	<div class="col-sm-12 col-xs-12 col-md-10">
+		<div class="container dw">
+			<div class="row">
+				<div class="panel">
+					<textarea id="input" class="form-control" rows="8"></textarea>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="panel">
+					<div style="width: 100%;" class="btn btn-group btn-group-sm">
+						<button id="btn" class="btn btn-default" style="width: 100%">Run</button>
+					</div>
+				</div>
+			</div>
+			
+			<div class="row">
+				<div class="panel">
+					<textarea id="output" class="form-control" rows="13"></textarea>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</body>
+<script src="data.js"></script>
+<script src="functions.js"></script>
+<script type="text/javascript">
+	$("#btn").click(function(){
+		var val = $("#input").val();
+		
+		var res = "";
+		
+		val = val.split("\n").join("");
+		val = val.split("	").join("");
+	//	val = val.split(" ").join("");
+		
+		var x, i = 0;
+		var nl = "\n";
+		var dept = 0;
+		var w = false;
+		var cb = false;
+		var cm = false;
+		
+		while(true){
+			var char = val[i];
+			
+			if(typeof char == "undefined" || val.length == i) break; 
+			
+			
+			if(char == "/" && val[i - 1] == "*"){
+				cm = false;
+		//		res += char + nl;
+				i++;
+				continue; 
+			}
+			
+			if(char == "/" && val[i + 1] == "*"){
+				cm = true;
+		//		res += nl + char;
+				i++;
+				continue; 
+			}
+
+			if(cm){
+		//		res += char;
+				i++;
+				continue; 
+			}
+			
+			
+			if(char == "}") cb = false;
+			
+			if(cb){
+				if(char == ":" || char == "["){ w = true; } //Opening
+				if(char == ";" || char == "]"){ w = false; } //Closing
+			}
+			
+			if(char == "}" && val[i - 1] != ";"){
+				w = false; 
+				res += ";" + nl;
+			}
+			
+			if(w){
+				if(char == "!" && val[i - 1] != " "){
+					res += " ";
+				}
+				res += char;
+				if(char == ":" && val[i + 1] != " ") res += " ";
+				i++;
+				continue; 
+			}
+			
+			if(char == " "){
+				 i++; 
+				 continue; //Here in level two, We don't need default spaces
+			}
+			
+			if(char == "{"){
+				 res += " ";
+				 cb = true;
+			}
+		
+			if(char == ">") res += " ";
+			
+			res += char;
+		
+			switch(char){
+				case "{":
+					res += nl + "	";
+					break; 
+					
+				case ";":
+					
+					res += nl;
+					
+					if(nextChar(val, (i + 1)) != "}"){
+						res += "	";
+					}
+					break; 
+				
+				case "}":
+					res += nl;
+					
+				case ">":
+					res += " ";
+					break; 
+				
+				case ",":
+					res += nl;
+					break; 
+			}
+			i++;
+		} /**/
+		
+		$("#output").val(res);
+	});
+	
+	function nextChar(arr, cpos){
+		var i = cpos;
+		
+		var j = " 	".split("");
+		
+		while((arr.charAt(i) == " ")){
+			i++;
+		}
+		
+		return arr[i];
+	}
+	
+	
+/******Note
+Beta Version
+
+Author Jovanni De Guia
+xCreation
+
+This static page is Beta version, which is too many bugs and failure
+can be occur anytime.
+
+Started at June 27, 2020
+Created at June 27, 2020
+
+New CSS version may cause error on this function
+
+
+
+
+*****/
+</script>
+</html>

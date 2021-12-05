@@ -1,0 +1,356 @@
+<meta name="viewport" content="initial-scale=1, width=320">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Roman Numerals</title>
+<link rel="stylesheet" href="bootstrap.min.css">
+<style type="text/css">
+body, .default_width{
+	max-width: 480px;
+	min-width: 240px;
+}
+table, tr, td {
+	border: 0;
+	border-collapse: collapse;
+}
+table{
+	width: 98%;
+	margin: auto;
+}
+.inp_field{
+	width: 80%;
+}
+.cnp {
+	width: 98%;
+	background-color: #f0f0f0;
+	margin: 4px auto 5px auto;
+	border: 1px solid #909090;
+	border-radius: 15px;
+}
+.inp_field > input {
+	width: 100%;
+	border: 0;
+	background-color: #fff;
+	border-radius: 15px 0 0 15px;
+	text-align: center;
+}
+.btn_field > button {
+	background-color: #00ffb7;
+	border: 1px solid #f5f5f5;
+	border-radius: 0 15px 15px 0;
+	transition: all .5s ease-in-out;
+	font-weight: bold;
+	font-size: 15px;
+	margin: 1px;
+	text-align: center;
+}
+.btn_field > button:hover {
+	background-color: #00b7f0;
+}
+.info {
+	width: 100%;
+	margin: 1px auto 2px auto;
+	text-align: center;
+	margin-right: 0;
+}
+.info > span {
+	position: relative;
+	border: 1px solid #efefef;
+	text-align: center;
+	margin: 0 2px 0 2px;
+	padding: 0 5px 0 5px;
+	width: 30%;
+}
+#roman {
+	border-radius: 0 15px 0 15px;
+	background-color: #ffb700;
+	z-index: 99;
+}
+#number {
+	border-radius: 15px 0 15px 0;
+	background-color: #b700ff;
+}
+table, tr, td {
+	border: 0;
+	border-collapse: collapse;
+	text-align: center;
+}
+#res, res_field {
+	overflow: scroll;
+	font-size: 15px;
+}
+.res_field {
+
+}
+</style>
+<script src="jquery-1.10.2.min.js"></script>
+<!--<script src="helpers.js"></script>-->
+</head>
+<body>
+	<div class="container cnp default_width">
+		<table>
+			<tr>
+				<td class="inp_field">
+					<input id="input" type="text" name="value" placeholder="Auto Detect">
+				</td>
+				<td class="btn_field">
+					<button id="btn">Convert</button>
+				</td>
+			</tr>
+		</table>
+		<div class="info">
+			<span id="roman">Roman</span>to
+			<span id="number">Numbers</span>
+		</div>
+	</div>
+	<div class="res_field container cnp default_width">
+		<div id="">
+			<span id="res">Type Something</span>
+		</div>
+	</div>
+	<div class="container cnp default_width">
+		<table>
+			<tr>
+				<td>Roman</td>
+				<td>Number</td>
+			</tr>
+			<tr>
+				<td>I</td>
+				<td>1</td>
+			</tr>
+			<tr>
+				<td>V</td>
+				<td>5</td>
+			</tr>
+			<tr>
+				<td>X</td>
+				<td>10</td>
+			</tr>
+			<tr>
+				<td>L</td>
+				<td>50</td>
+			</tr>
+			<tr>
+				<td>C</td>
+				<td>100</td>
+			</tr>
+			<tr>
+				<td>D</td>
+				<td>500</td>
+			</tr>
+			<tr>
+				<td>M</td>
+				<td>1000</td>
+			</tr>
+		</table>
+	</div>
+	<div class="container cnp default_width">
+		<h6>Note: </h6>
+		<p>Only 9,999 (Nine thousand Nine Hundred Ninety Nine) for Numbers due to slowness and to avoid crashing of the app.</p>
+		<blockqoute>~xCreat10n</blockqoute>
+	</div>
+</body>
+<script type="text/javascript">
+
+const field = document.querySelector("#input");
+const btn = document.querySelector("#btn");
+const pr = document. querySelector("#res");
+var last = "number";
+
+field.addEventListener("keyup", run);
+btn.addEventListener("click", run);
+
+document.body.onload = function(){
+//	setInterval(run, 1000);
+}
+
+function run(){
+	var x = field.value;
+	
+	var val = Number(x);
+	
+	valb = val.toString();
+	
+	if(valb == "NaN" && last == "number"){
+		toggle("number");
+		last = "string";
+		//Roman to Numbers
+		
+		
+	}else if(valb != "NaN" && last == "string"){
+		last = "number"
+		toggle("roman");
+		//Numbers to Roman
+	}
+	
+	var res = "Type Something";
+	
+	if(last == "number"){
+	//	print("number")
+		x = x.replace(",", "");
+		
+		if(parseInt(x) > 9999){
+			res = "Only 9999 and below are available";
+		}else{
+			
+			var num = Number(x);
+			str = num.toString();
+			if(str.indexOf(".") != -1){
+				var split = str.split(".");
+				
+				if(split[0] > 9999 || split[1] > 9999){
+					res = "Only 9999 and below are available";
+				}else{
+		
+					var a = toRoman(split[0]);
+					var b = toRoman(split[1]);
+			
+					var res = a + "." + b;
+				}
+			}else{
+				res = toRoman(str);
+			}
+		}
+		
+	}else{
+	//	print("string");
+		var ch = romanCheck(x);
+		
+		//Bool
+		if(ch){
+			res = toNum(x);
+		}else{
+			res = "Invalid Input";
+		}
+	}
+	
+	if(res == null || res == ""){
+		res = "Type a Roman or a Number";
+	}
+	pr.innerHTML = res;
+}
+
+function romanCheck(str){
+	const romans = ["m","c","l","x","d","v","i"];
+	
+	str = str.toLowerCase();
+	
+	for(var i = 0; i < str.length;  i++){
+		if(romans.indexOf(str.charAt(i)) == -1){
+			return false;
+		}
+	}
+	return true;
+}
+
+function toggle(to){
+	if(to == "roman"){
+		$("#number").animate({right : "33%"});
+		$("#roman").animate({left : "27%"});
+	}else{
+		$("#number").animate({right: "0%"});
+		$("#roman").animate({left: "0%"}); /**/
+	}
+}
+
+//Number to Roman
+function toRoman(num){
+	if( num <= 0 ){ return ""; }
+	
+	var roman = { 1 : "I", 
+		4 : "IV", 5 : "V", 9 : "IX", 
+		10 : "X", 40 : "XL", 50 : "L", 
+		90 : "XC", 100 : "C", 400 : "CD", 
+		500 : "D", 900 : "CM", 1000 : "M" };
+	
+	const floorKey = function(x){
+		x = ( typeof x == "number" ) ? x.toString() : x;
+	
+		var num = i = 0, zero = "";
+	
+		for( i; i < (x.length - 1); i++ ){
+			zero += "0";
+		} //End for i is lower than length of x minus 1
+	
+		num = parseInt(x[0] + zero);
+	
+		while(true){
+		
+			if( typeof roman[num] != "undefined" ){
+				return num; 
+			} //End if typeof roman object is not undefined
+			
+			num = ( num - parseInt("1" + zero) );
+			
+		} //End while true
+	} //End floorKey Function
+
+	var fkey = floorKey(num);
+	
+	return ( num == fkey ) ? roman[fkey] : roman[fkey] + toRoman(num - fkey);
+}
+
+
+//Roman To Number 
+function toNum(str){
+	const proc = function(d, ln, ld){
+		if(ln > d){
+			return ld - d;
+		}
+		return ld + d;
+	}
+	
+	var ln = decimal = 0;
+
+	if(typeof str != 'string'){
+		throw new Exception("Function toNum required a String parameter");
+	}
+	
+	str = str.toUpperCase();
+	
+	var len = str.length; 
+
+	for(var i = len - 1; i >= 0; i--){
+		
+		switch(str.charAt(i)){
+			case "M":
+				decimal = proc(1000, ln, decimal);
+				ln = 1000;
+				break; 
+				
+			case "D":
+				decimal = proc(500, ln, decimal);
+				ln = 500;
+				break; 
+				
+			case "C":
+				decimal = proc(100, ln, decimal);
+				ln = 100;
+				break;
+			
+			case "L":
+				decimal = proc(50, ln, decimal);
+				ln = 50;
+				break;
+				
+			case "X":
+				decimal = proc(10, ln, decimal);
+				ln = 10;
+				break;
+			
+			case "V":
+				decimal = proc(5, ln, decimal);
+				ln = 5;
+				break; 
+			case "I":
+				decimal = proc(1, ln, decimal);
+				ln = 1;
+				break; 
+		}
+	}
+	
+	return decimal;
+}
+/**/
+</script>
+</html>

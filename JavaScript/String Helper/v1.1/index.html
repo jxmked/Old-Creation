@@ -1,0 +1,205 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<html>
+<head>
+<title>String Helper</title>
+<link rel="stylesheet" href="bootstrap.min.css">
+<style type="text/css">
+body, .dw{
+	max-width: 480px;
+	min-width: 240px;
+}
+body {
+	margin: auto;
+	white-space: nowrap;
+}
+
+#msg {
+	padding: 2px;
+	margin: 1px 0px 1px 1px;
+	border-radius: 15px;
+	font-size: 12px;
+	width: 100%;
+	overflow: scroll;
+}
+.xbtn-group {
+	padding: 0;
+	width: 100%;
+	margin: auto;
+	position: relative; 
+	display: block;
+	
+}
+.xbtn {
+	width: 33.333%;
+	margin: auto;
+}
+</style>
+<script src="jquery-1.10.2.min.js"></script>
+<script src="helpers.js"></script>
+</head>
+<body>
+	<div style="margin: 0 2px 10px 2px; border: 1px solid #eeeeee; border-radius: 0 0 15px 15px;" class="nav text-center bg-info">
+		<h4 class="">String Helpers</h4>
+	</div>
+	
+	<div class="col-sm-12 col-xs-12 col-md-10">
+		<div class="container dw">
+			<div class="row">
+				<div class="panel">
+					<textarea id="input" style="line-height: 15px" rows="3" class="form-control"></textarea>
+				</div>
+			</div>
+			
+			<!--Output-->
+			<div style="margin: 0px 0px 0px 0px" class="row">
+				<div class="panel">
+					<div class="h5 text-center">Output only</div>
+					<textarea id="output" rows="5" class="form-control"></textarea>
+				</div>
+			</div>
+			
+			<!--Buttons & Message-->
+			<div class="row">
+				<div class="panel">
+					<div style="border-radius: 5px; overflow: scroll; text-align: center" class="bg-info">
+						<span style="" id="msg"></span>
+					</div>
+					
+					<div class="xbtn-group btn btn-group">
+						<button id="run" style="width: 100%" class="btn btn-default alert-info">RUN</button>
+					</div>
+					
+					<div style="width: 100%;" class="panel">
+						<div class="xbtn-group btn btn-group">
+							<button data="0" id="ULA" title="UL Off|UC|LC|true" class="xbtn btn btn-default"></button>
+							<button data="0" id="RSS" title="DS Off|RS|SBC|true" class="xbtn btn btn-default"></button>
+							<button data="0" id="ULF" title="DC Off|LCF|UCF|true" class="xbtn btn btn-default"></button>
+						</div>
+						<div class="xbtn-group btn btn-group">
+							<button data="0" id="CNT" title="Cnt Off|Count|CIn|true" class="xbtn btn btn-default"></button>
+							<button data="0" id="TSC" title="TSC Off|TSC|true" class="xbtn btn btn-default"></button>
+							<button data="0" id="RMD" title="Rand Off|RmC|true" class="xbtn btn btn-default"></button>				
+						</div>
+						<div class="xbtn-group btn btn-group">
+							<button data="0" id="CLF" title="CLF Off|UF|LF|UL|LL|ULF|LLF|UFLL|LFUL|true" class="xbtn btn btn-default"></button>
+							<button data="0" id="SHC" title="SHC Off|SCES|SAC|SCW|SAW|true" class="xbtn btn btn-default"></button>
+							<button data="0" id="RVS" title="RVS Off|RWS|RWW|true" class="xbtn btn btn-default"></button>				
+						</div>
+					</div>
+				</div>
+			</div>
+			
+		</div>
+	</div>
+</body>
+<script src="data.js"></script>
+<script src="functions_v1.1.js"></script>
+<script type="text/javascript">
+var tmp = "";
+function run(){
+	var val = $("#input").val();
+	
+	if(tmp != val){
+		msg("=)", true);
+	}
+	
+	tmp = val;
+	
+	var res = val;
+
+	if($("#CNT").attr("data") == "0"){
+		//If count is on... We don't need this
+		if($("#TSC").attr("data") == "1"){
+			//System is having a trouble of processing some special character causig of
+			//Wrong output.  I decided to convert from Regular text to Hex
+			//and begin translation between Regular characters to Special characters
+			var hex = toHex(res.split(""));
+			hex = TSC(hex);
+			res = toStr(hex).join("");
+		}
+		res = RSS(res);
+		res = ULA(res);
+		res = ULF(res);
+		res = RMD(res);
+		res = RVS(res);
+		res = SHC(res);
+		res = CLF(res);
+	} //End If 
+	
+	res = CNT(res);
+	
+	$("#output").val(res);
+} //End run function
+
+/****Copied from another project ****/
+
+//Translate from Hex to String
+function toStr(arr) {
+	return arr.map(function(hex) {
+		return String.fromCharCode(parseInt(hex, 16));
+	}); //End Map
+} //end toStr Function
+
+//Translate from ASCII to Hex
+function toHex(arr) {
+	return arr.map(function(char) {
+		return Number(char.charCodeAt(0)).toString(16);
+	}); //End Map
+} //End toHex Function
+
+/****End FUNCTION ****/
+
+/**Event Listener**/
+$("#run").click(function(){
+	run();
+	msg("=)", true);
+});
+$("#input").keyup(run);
+
+$(".xbtn").click(function(){
+	var data = $(this).attr("title").split("|");
+	var count = parseInt($(this).attr("data"));
+	
+	var num = ((data.length - 2) <= count) ? 0 : (count + 1);
+	
+	$(this).attr("data", num);
+	
+	if(data[(data.length - 1)] == "true"){
+		$(this).text(data[$(this).attr("data")]);
+		msg($(this).attr("id"), data[$(this).attr("data")]);
+	} //End If
+	run();
+}); //End xbtn class clicl function
+
+/**End event Listener **/
+function msg(id, val){
+	if(val == true){
+		$("#msg").text(id);
+		return; 
+	} //End if
+
+	var msgs = getMsgs();
+	if(typeof msgs[id] == "undefined"){
+		$("#msg").text("'" + id + "' is not registered");
+		return; 
+	} else {
+		if(typeof msgs[id][val] == "undefined"){
+			$("#msg").text("From '" + id + "', '" + val + "' is not registered");
+			return; 
+		} //End if
+	} //End if
+	
+	$("#msg").text(msgs[id][val]);
+}
+
+//listener for document.  On ready state
+$(document).ready(function(){
+	/**Set the Text for all .xbtn**/
+	$(".xbtn").map(function(index){
+		var val = document.getElementsByClassName("xbtn")[index].getAttribute("title");
+		document.getElementsByClassName("xbtn")[index].innerText = val.split("|")[0];
+	}); //End Map
+}); //End Document.ready
+</script>
+</html>

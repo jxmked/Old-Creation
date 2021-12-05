@@ -1,0 +1,366 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
+
+<html>
+<head>
+	<title>Code Beautifier</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<style type="text/css">
+		body, .dw{
+			max-width: 480px;
+			min-width: 240px;
+		}
+		body {
+			margin: 0 auto 0 auto;
+			white-space: nowrap;
+		}
+		#input,  #output {
+			line-height: 11px;
+			font-size: 10px;
+			font-family: monospace;
+		}
+		.notes {
+			border-radius: 15px;
+		}
+		.notes > p{
+			font-size: 10px;
+			text-align: center;
+			margin: 2px;
+		}
+		#menu_btn {
+			float: left;
+			z-index: 9999;
+			position: fixed;
+			left: 2px;
+			top: 7px;
+			border-radius: 10px;
+			padding: 5px 7px 5px 7px;
+			background-color: rgba(7,253,202, 0.3);
+		}
+	</style>
+			<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+	<!--<script src="jquery-1.10.2.min.js"></script>-->
+	<script src="helpers.js"></script>
+
+</head>
+<body>
+	<div style="margin: 0 2px 10px 2px; border: 1px solid #eeeeee; border-radius: 0 0 15px 15px;" class="nav text-center bg-info">
+		<div id="menu_btn" style="display:none">Back</div>
+		<h4 class="">CSS Beautifier<sub>Beta</sub></h4>
+	</div>
+	
+	<div class="col-sm-12 col-xs-12 col-md-10">
+		<div class="container dw">
+			
+			<!--Input-->
+			<div class="row">
+				<div class="panel">
+					<textarea id="input" class="form-control" rows="12"></textarea>
+				</div>
+			</div>
+			
+			<!-- Button and Note -->
+			<div class="row">
+				<div class="panel">
+					<div class="notes bg-info" style="">
+						<p>Note: All multi line comments will gonna be remove.</p>
+						<p>Note: May cause some errors for new version of CSS.</p>
+						<p>DEPRECATED!</p>
+					</div>
+					<div style="width: 100%;" class="btn btn-group btn-group-sm">
+						<button id="btn" class="btn btn-default" style="width: 100%">Run</button>
+					</div>
+				</div>
+			</div>
+			
+			<!-- Output -->
+			<div class="row">
+				<div class="panel">
+					<textarea id="output" class="form-control" rows="30"></textarea>
+				</div>
+			</div>
+			
+			<!--Blockqoute-->
+			<div class="row">
+				<div class="panel text-center">
+					<h4>Dev: xCreat10n</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<!--<script src="data.js"></script>-->
+<!--<script src="functions.js"></script>-->
+<script type="text/javascript">
+	document.getElementById("btn").addEventListener("click", Run);
+	document.getElementById("input").addEventListener("keyup", Run);
+	
+	function Run(){
+		var val = document.getElementById("input").value;
+		
+		var res = [];;
+		var out = [];
+		
+
+		
+	//	println(val);
+		
+		val = val.split("\n").join("");
+		val = val.split("	").join("");
+		val = rmCom(val);
+
+		
+		
+		var attrs = getAttr(val);
+		var tags = getTags(val);
+		
+		res = tags;
+		
+		var index = -1
+		
+		var tab = "	";
+	
+		res = tags.map(function(value){
+			index++;
+			return value + "{\n" + tab + attrs[index].join("\n" + tab) + "\n}\n";
+		}); /**/
+
+		document.getElementById("output").setAttribute("rows", index + 1);
+		document.getElementById("output").value = res.join("\n");
+	}
+
+//Remove multi line comments
+//This function Is deprecated. 
+function rmCom(str){
+	var val = str;
+	var sp = 0, ep = 0;
+	
+	//Check if multi line start and end comment is existing...
+	do {
+		//We're gonna having a trouble... if we let this to run if both ep and sp having a zero value
+		if(sp != 0 || ep != 0) val = val.replace(val.substr(sp, (ep - sp) + 2), "");
+		
+		//Find for multi line comment...
+		sp = val.indexOf("/*");
+		ep = val.indexOf("*/");
+		
+	} while((sp != -1) && (ep != -1));
+	
+	return val;
+} 
+
+//Get all tags	
+function getTags(str){
+	var res = []; //All tags will gonna be here
+	var pos = 0, index = 0;
+	
+	while(index != -1){
+		//Get each tag 
+		var val = Tags(str, pos);
+		
+		index = val[1];
+		
+		pos += (val[1] + 1);
+		
+		if(val[0].length > 0){
+			//And store it
+			res.push(val[0] + " ");
+		}
+	}
+	
+	return res;
+}
+
+//Get all Tags
+function Tags(val, pos){
+	var str = val.substr(pos);
+
+	//Get the position of both end and start of curly bracket
+	var start = str.indexOf("}");
+	var end = str.indexOf("{");
+
+	//If position is in beginning,  end bracket does not exist...
+	start = ((start > end) || (start == -1)) ? 0 :  start + 1;
+	
+	//Take off only the Tag(s) name
+	var tag = str.substr(start, (end - start));
+	
+	//Return the Tag(s) name and the last index
+	return [cleanTags(tag),  end];
+}
+
+//If two tags sharing in a single package of attribute... Handle it
+function cleanTags(str){
+	var val = "";
+	
+	//If multiple Tags is sharingin a single package of attributes, split it and 
+	return str.split(",").map(function(value){
+	
+		//Handle it
+		return cleanTagsB(value);
+	
+	}).join(",\n"); //Add new line after each Tag name
+}
+
+//If tags mapping its object... handle it well
+function cleanTagsB(val){
+	var split = val.split(">");
+
+	if(split == 1) return val;
+
+	return split.map(function(value){
+
+		//Remove spaces from bot end and front of tag name
+		return trimSE(value);
+
+	}).join(" > "); //Then add spaces between tags
+}
+
+//Get All Attributes
+function getAttr(str){
+	var res = []; //All attributes will gonna be here
+	
+	var pos = 0, index = 0;
+	
+	while(index != -1){
+	
+		//Get all Attributes
+		var x = tagAttr(str, pos);
+		
+		index = x[1];
+		
+		pos += (index + 1);
+		
+		res.push(x[0]);
+	}
+	
+	return res;
+}
+
+
+//Get all Attribute from a single tag
+function tagAttr(val, pos){
+	var str = val.substr(pos);
+	
+	//Attributes in inside of curly brackets
+	var s = (str.indexOf("{") + 1);
+	var e = str.indexOf("}");
+	
+	//Take off only the attributes
+	var res = str.substr(s, (e - s));
+	
+	//Fix some spaces and semi-colons to each attribute
+	return [attrAttr(res), e];
+}
+
+//Separate each attribute
+function attrAttr(val){
+	var split = val.split(";");
+	var res = [];
+	
+	//If the attribute has a "," in value, 
+	//Split it to a new line and tab
+	
+	for(var index in split){
+		if(split[index] == "" || split[index].length <= 3) continue; 
+		
+		var attr = attrValue(split[index]) + ";";
+		var splitB = attr.split(",");
+		
+		//Escape for RGBA, RGB
+		if(splitB.length >= 3 && (attr.indexOf("rgba") == -1 || attr.indexOf("rgb") == -1)){
+			res.push(splitB.join(",\n		"));
+			continue; 
+		}
+		
+		res.push(attr);
+	}
+	
+	return res;
+}
+
+//Make each attribute has been maintain well
+function attrValue(val){
+	var res = []; index = 0;
+
+	val = val.split("  ").join(" "); //Remove double spaces
+	
+	//Fix spaces errors
+	return val.split(":").map(function(attr){
+		return trimSE(attr);
+	}).join(": ");
+}
+
+//Trim/remove spaces in both front and end
+function trimSE(str){
+	var trim = function(str){
+		str = (str.charAt(0) == " ") ? str.substr(1) : str;
+		return (str.substr(-1) == " ") ?  str.substr(0, (str.length - 1)) : str;
+	};
+	
+	do {
+		str = trim(str);
+	} while(str.charAt(0) == " " || str.substr(-1) == " ");
+	
+	return str;
+}
+
+/***Added Feature to back to xCreat10n Home page*****/
+/**This page version don't have JQuery so I slightly modified some codes******/
+function get(index){
+	var res = {};
+	var url = window.location.toString();	
+	url.substr(url.indexOf("?") + 1).split("&").map(function(item){
+		var val = item.split("=");
+		res[val[0]] = val[1];
+	}); return res[index];
+}
+
+document.body.onload = function(){
+	var loc = get("loc");
+	if(loc){
+		document.getElementById("menu_btn").removeAttribute("style");
+		document.getElementById("menu_btn").addEventListener("click", function(){
+			var res = loc.substr(1).split("%").map(function(hex) {
+				return String.fromCharCode(parseInt(hex, 16));
+			}).join("");
+			window.location = res;
+		});
+	}
+};
+/******Note
+Beta Version
+
+Author Jovanni De Guia
+xCreation
+
+This static page is a Beta version, which is too many bugs and failure
+can be occur at anytime in-use.
+
+Started at June 27, 2020
+Created at June 27, 2020
+
+******* Rebuilt/Debug and Fixed *******
+System Rebuilt at June 30, 2020 {
+	Added Back to homepage button
+}
+
+
+Multi-comment and Single line comment may cause errors
+	-Function for those haven't build yet...
+	
+New CSS version may cause error on this function
+*****/
+</script>
+</html>

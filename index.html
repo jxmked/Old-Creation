@@ -1,0 +1,304 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
+
+<html>
+<head>
+<title>Old xCreat10n</title>
+	<style type="text/css">
+		body {
+			display: block;
+			margin: 1px auto 1px auto;
+			white-space: nowrap;
+			padding: 0;
+			background-color: #fff;
+			width: 320px;
+			color: #232323;
+			text-align: center;
+			font-size: 1em;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
+			line-height: 1.42857143; 
+			color: #555555; 
+		//	background-image: url('bg-imgs/08.jpg');
+		//	background-color: #ffffff;
+			background-repeat: no-repeat;
+			background-position: center center;
+	//		background-origin: padding-box;
+			background-size: cover;
+			height: 100%;
+			background-attachment: fixed;
+		}
+		h4{
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-weight: 700;
+			line-height: 1.1;
+			color: #317eac;
+			margin-top: 10px;
+			margin-bottom: 10px;
+			font-size: 18px;
+		}
+		#item-list, #item-list > div {
+			width: 100%;
+		}
+		#item-list > div > div  {
+			background-color: rgba(250,250,250, 0.6); 
+			width: 85px;
+			height: 85px;
+			border: 5px double #f0f0f0;
+			margin: 5px;
+			border-radius: 15px;
+			box-shadow: 4px 4px 5px rgba(153,153,153,0.6);
+			position: relative; 
+			min-height: 1px; 
+			float: left;
+		}
+		#item-list > div > div > div {
+			width: 100%;
+		}
+		#item-list > div > div > div  > div {
+	//		margin: 5% auto 0px auto;
+			width: 100%;
+			overflow: hidden;
+			height: auto;
+			line-height: 20px;
+		}
+		#item-list > div > div > div > div > h4 {
+			margin: 0;
+			padding: 0;
+			border-top: 1px groove #f5f5f5;
+			color: #6891ac;
+		}
+		#item-list > div > div > div > div > p:last-child {
+			border-bottom: 1px groove #f0f0f0;
+			width: 98%;
+			font-weight: 600;
+			font-size: 13px;
+			color: #515151;
+			margin: 0;
+		}
+		#item-list > div > div > div > div > p:nth-child(2) {
+			text-align: right;
+			position: inline-block; 
+			vertical-align: bottom;
+			font-family: monospace;
+			margin: 0 5px 0 0;
+			padding: 0;
+			line-height: 9.5px;
+			font-size: 8px;
+			font-weight: bold;
+			color: #9b1f2a;
+		}
+		.dummy {
+			bottom: -500px;
+			width: 100%;
+			height: 20px;
+			display: block;
+			position: static;
+			clear: both;
+		}
+		body > div:first-child, body > div:nth-child(2){
+			text-align: center;
+	//		background-color: #d9edf7;
+			background-color: rgba(200, 240, 245, 0.7);
+			position: fixed;
+			width: 310px;
+			z-index: 99;
+			display: block;
+			margin: -1px 4px 7px 4px;
+			border: 1px solid #eeeeee;
+			border-radius: 0 0 15px 15px;
+		}
+		body > div:nth-child(2){
+			opacity: 0;
+			position: static; 
+			width: 20px;
+		}
+		#item-list > div > div:hover {
+			background-color: rgba(65,111,187, 0.5);
+			color: #fff;
+		}
+		table, tr, td {
+			border: 0;
+			border-collapse: collapse; 
+			position: fixed; 
+			float:left;
+			width: 100%;
+			height: 100%;
+			
+		}
+	</style>
+	
+	<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+	
+</head>
+<body>
+	<div>
+		<h4 class="">xCreat10n</h4>
+
+	</div>
+	<!-- Taking off this one may cause of problem on item list -->	
+	<div>
+		<h4 class="">xCreat10n</h4>
+	</div>
+	
+	<noscript>JavaScript is Off</noscript>
+	
+	<div id="item-list" class="container">
+		<div id="display">
+		<!--
+			<div>
+				<div>
+					<div>
+						<h4>Title</h4>
+						<p>v2.0</p>
+						<p>Play</p>
+					</div>
+				</div>
+			</div> -->
+			
+		</div>
+	</div>
+	<div class="dummy"></div>
+</body>
+<!--Data is here-->
+<script src="index.js"></script>
+<script type="text/javascript">
+'use strict'
+
+var addIconColor = 0;
+var addBGImg = 0;
+var randBGImg = 0;
+
+var colors = [
+		"#2eb74d","#f55d87","#d898a7","#42c3ea","#c979bc","#d1c6a6"
+	];
+	
+var bgs = ["01","02","03","04","05","06","07","08","09","10","11","12"];
+
+document.body.onload = function(){
+	var index = getData();
+	if(addBGImg)
+    	document.body.setAttribute("style","background-image:url('bg-imgs/" + rand(bgs) + ".jpg')");
+    
+    if(randBGImg)
+    	bgRun();
+    	
+//	tab();
+	render(index);
+
+};
+
+function bgRun(){
+	setInterval(function(){
+		document.body.setAttribute("style","background-image:url('bg-imgs/" + rand(bgs) + ".jpg')");
+	}, 5000);
+}
+
+function render(index){
+	index.map(function(data){
+		var type = (data["type"]) ? " " + data["type"] : "";
+		
+		var name = data["title"]
+		var version = data["version"];
+		
+		var link = toUrl(data["link"]);
+		
+		var size = Math.floor(140 / name.length); 
+		
+		size = (size > 16) ? 16 : size;
+		size = (size < 10) ? 10 : size; 
+		
+		var up = (57 - size) / 2;
+		
+		var a = document.createElement("div");
+		var h4 = document.createElement("h4");
+		h4.setAttribute("style", "font-size:" + size + "px");
+		
+		h4.appendChild(document.createTextNode(name)); //H4
+		a.appendChild(h4);
+		
+		var ap = document.createElement("p");
+		ap.appendChild(document.createTextNode(version));
+		a.appendChild(ap);
+		
+		var bp = document.createElement("p");
+		bp.appendChild(document.createTextNode(ucfirst(type)));
+		a.appendChild(bp);
+		
+		a.setAttribute("style", "margin:" + up + "px auto 0 auto;");
+		
+		var b = document.createElement("div");
+		b.appendChild(a);
+	
+		var c = document.createElement("div");
+		c.setAttribute("onclick", "run ('" + link + "')");
+	    
+	    if(addIconColor)
+		    c.setAttribute("style", "background-color:" + rand(colors));
+	
+		c.appendChild(b);
+		
+		document.getElementById('display').appendChild(c); 
+	});
+}
+
+function rand(arr){
+	return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function run(str){
+	document.location.href = document.location.href + str;
+} 
+
+/**Helpers**/
+function urlEncode(str){
+	return "%" + str.split("").map(function(char) {
+		return Number(char.charCodeAt(0)).toString(16);
+	}).join("%");
+}
+
+function urlDecode(str){
+	return str.substr(1).split("%").map(function(hex) {
+		return String.fromCharCode(parseInt(hex, 16));
+	}).join("");
+}
+
+function ucfirst(str){
+	str = str.trim();
+	return str.charAt(0).toUpperCase() + str.substr(1);
+}
+
+function dirname(str){
+	if(typeof str == "object"){
+		str = str.toString();
+	}
+	
+	var len = str.length; 
+	var res = "";
+	
+	for(var i = len; i > 0; i--){
+		if(str.charAt(i - 1) == "/"){
+			return str.replace("/" + res.split("").reverse().join(""), "");
+		}
+		res += str.charAt(i - 1);
+	}
+}
+function toUrl(str){
+	var x = str;
+ 	while(x.indexOf(" ") != -1){
+		x = x.replace(" ", "%20");
+	} return x;
+}
+
+/**/</script>
+</html>

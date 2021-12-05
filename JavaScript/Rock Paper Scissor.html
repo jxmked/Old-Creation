@@ -1,0 +1,195 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
+
+<head>
+<title>RPS</title>
+<!--<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">-->
+<style type="text/css">
+body {
+	display: block;
+	white-space: nowrap;
+	padding: 0;
+	background-color: #fff;
+	width: 100%;
+	color: #232323;
+	text-align: center;
+	font-size: 1em;
+}
+body, table, #info{
+	max-width: 480px;
+	min-width: 240px;
+}
+table, theader, tbody, tfooter, tr, td {
+	border-collapse: collapse; 
+}
+table, #info{
+	width: 98%;
+}
+table, body, .dev{
+	margin: auto;
+}
+table, #info {
+	font-weight: bold;
+}
+table, tr {
+	border: 2px solid #c5c4c0;
+}
+td {
+	width: 33.333333%;
+	padding: 10px;
+}
+#you, #opponent, .dev {
+	color: #00b7ff;
+	font-size: 20px;
+}
+.btns, #info, .dev{
+	border-radius: 5px;
+}
+.btns {
+	border: 1px solid #c3c3c3;
+	background-color: #f5f5f5;
+	margin: 5px;
+	display: inline-block;
+	width: 100%;
+}
+.btns:hover {
+	background-color: #e5e5e5;
+} 
+#info {
+	color: #004085; 
+	background-color: #cce5ff; 
+	border: 1px solid #b8daff;
+	position: relative;
+	margin: 5px auto 4px auto;
+}
+.dev {
+	padding: 3px;
+	background-color: #f0f0f0;
+	text-shadow: 1px 2px 1px #f000b7;
+}
+</style>
+		<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+</head>
+<body>
+<div id="info">Welcome</div>
+<table>
+	<theader>
+		<tr>
+			<td>Player</td>
+			<td>Draw</td>
+			<td>Enemy</td>
+		</tr>
+		<tr>
+			<td id="pl">0</td>
+			<td id="dr">0</td>
+			<td id="en">0</td>
+		</tr>
+	</theader>
+	<tbody>
+		<tr>
+			<td id="you">&nbsp;</td>
+			<td>Versus</td>
+			<td id="opponent">&nbsp;</td>
+		</tr>
+	</tbody>
+	<tfooter>
+		<tr>
+			<td>
+				<span class="btns" onClick="RPS('rock')">Rock</span>
+			</td>
+			<td>
+				<span class="btns" onClick="RPS('paper')">Paper</span>
+			</td>
+			<td>
+				<span class="btns" onClick="RPS('scissor')">Scissor</span>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="3">
+				<div class="dev">Dev: xIO</div>
+			</td>
+		</tr>
+	</tfooter>
+</table>
+<script type="text/javascript">
+var lever = true;
+
+const rules = {'rock' : 'paper', 
+	'paper' : 'scissor',
+	'scissor' : 'rock' };
+const items = new Array('rock','paper','scissor');
+
+const notes = {'player' : 'You Win!',
+	'enemy' : 'You Lose!',
+	'draw' : 'Draw' };
+
+const scores = {player : 0,
+	enemy : 0,
+	draw : 0 };
+
+document.body.onload = function(){
+	setInterval(function(){
+		if(lever){
+			this.you.innerHTML = ucfirst(enemysTurn());
+			this.opponent.innerHTML = ucfirst(enemysTurn());
+		}
+	}, 1500);
+}
+
+function RPS(turn) {
+	lever = false;
+	this.plt = turn;
+	this.ent = enemysTurn();
+	start();
+	Render();
+}
+
+function start(){
+	if(this.plt == this.ent){
+		setScore('draw');
+		return;
+	}
+	setScore((rules[this.plt]==this.ent)?'enemy':'player');
+}
+
+function setScore(opponent){
+	if(opponent.indexOf(scores)){
+		this.info.innerHTML = notes[opponent];
+		scores[opponent]++;
+	}
+}
+
+function enemysTurn(){
+	return items[Math.floor(Math.random()*3)];
+}
+
+function Render(){
+	this.pl.innerHTML = addZero(scores.player);
+	this.dr.innerHTML = addZero(scores.draw);
+	this.en.innerHTML = addZero(scores.enemy);
+	
+	this.you.innerHTML = ucfirst(this.plt);
+	this.opponent.innerHTML = ucfirst(this.ent);
+}
+
+function ucfirst(x){
+	return x[0].toUpperCase() + x.toLowerCase().substr(1);
+}
+function addZero(x){
+	return (x < 10) ? '0' + x : x;
+}
+</script>
+</body>
+</html>

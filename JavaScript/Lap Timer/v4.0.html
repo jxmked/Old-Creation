@@ -1,0 +1,321 @@
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<html>
+<head>
+<title></title>
+<style type="text/css">
+body {
+	max-width: 380px;
+	display: block;
+	margin: 0;
+	padding: 0;
+	background-color: #333333;
+	color: #fff;
+	width: 100%;
+	text-align: center;
+	font-size: 1.2em;
+}
+button {
+	margin: 0 2px 3px 2px;
+	padding: 2;
+	border-radius: 6px;
+	background-color: cccccc;
+	border: 1px solid #fff;
+	
+}
+table, td, tr {
+	margin: 0;
+	padding: 0;
+	border-collapse: collapse;
+	text-align: center;
+}
+table {
+	border: 1px solid #555555;
+	width: 98%;
+	margin: auto;
+	
+}
+tr:nth-child(even){
+	background-color: #555555;
+	color: #fff;
+}
+.time {
+	margin: 0 auto 5px auto;
+	width: 0;
+	font-family: monospace; 
+	font-size: 1.2em;
+}
+</style>
+</head>
+<body id="display">
+</body>
+<table class="time">
+	<tbody>
+		<tr class="">
+			<td id="hour">00</td>
+			<td class="colon" title="show">:</td>
+			<td id="min">00</td>
+			<td class="colon" title="show">:</td>
+			<td id="sec">00</td>
+			<td>.</td>
+			<td id="msec">00</td>
+		</tr>
+	</tbody>
+</table>
+<div>
+	<button id="trigger">Start</button>
+	<button id="reset">Reset</button>
+	<button id="lap">Lap</button>
+</div>
+<table id="tbl_lap">
+	<tr>
+		<td>#.</td>
+		<td>Total</td>
+		<td></td>
+		<td>Difference</td>
+ 	</tr>
+</table>
+<script>
+const min	= document.getElementById("min");
+const hour	= document.getElementById("hour"); 
+const sec	= document.getElementById("sec"); 
+const msec	= document.getElementById("msec"); 
+const col	= document.getElementsByClassName("colon"); 
+const lpd	= document.getElementsByClassName("lapped");
+const btn	= document.getElementById("trigger"); 
+const lap	= document.getElementById("lap"); 
+const table	= document.getElementById("tbl_lap");
+var reset	= document.getElementById("reset");
+var dhr		= 0;
+var dmin	= 0;
+var dsec	= 0;
+var dmsec	= 0;
+var dhrb	= 0;
+var dminb	= 0;
+var dsecb	= 0;
+var dmsecb	= 0;
+var eng		= 0;
+var laps	= 0;
+
+btn.addEventListener("click", start); 
+reset.addEventListener("click", rst); 
+lap.addEventListener("click", lapped); 
+
+lap.style.display	= "none";
+reset.style.display	= "none";
+table.style.display = "none";
+
+setInterval(engine, 10);
+
+setInterval(function()
+{
+	for(var l = 0; l < col.length; l++)
+	{
+		if(col[l].title == "show")
+		{
+			col[l].style.opacity = "0";
+			col[l].title = "hide";
+		}
+		else
+		{
+			col[l].style.opacity = "1";
+			col[l].title = "show";
+		}
+	}
+}, 500);
+
+function start()
+{
+	if(eng == 0)
+	{
+		eng = 1;
+		btn.innerHTML = "Pause";
+	}
+	else if(dhr > 59 && eng == 1 || eng == 2)
+	{
+		if(eng == 2)
+		{
+			rst();
+			eng = 0;
+		}
+		eng++;
+		btn.innerHTML = "Start";
+	}
+	else
+	{
+		eng = 0;
+		btn.innerHTML = "Start";
+	}
+}
+
+function rst()
+{
+	dmin	= 0;
+	dsec	= 0;
+	dmsec	= 0;
+	dhr		= 0;
+	dmsecb	= 0;
+	dsecb	= 0;
+	dminb	= 0;
+	dhrb	= 0;
+
+	for(var i = 0; i < laps; i++)
+	{
+		table.removeChild(lpd[0]);
+	}
+
+	laps 	= 0;
+	table.style.display = "none";
+}
+
+function engine()
+{
+	if(eng == 1)
+	{
+		dmsec++;
+		
+		if(dmsec > 99)
+		{
+			dsec++;
+			dmsec = 0
+			
+			if(dsec > 59)
+			{
+				dmin++;
+				dsec = 0;
+				
+				if(dmin > 59)
+				{
+					dhr++;
+					dmin = 0
+					
+					if(dhr > 59)
+					{
+						start();
+					}
+				}
+			}
+		}
+		
+		dmsecb++;
+		
+		if(dmsecb > 99)
+		{
+			dsecb++;
+			dmsecb = 0
+			
+			if(dsecb > 59)
+			{
+				dminb++;
+				dsecb = 0;
+				
+				if(dminb > 59)
+				{
+					dhrb++;
+					dminb = 0
+				}
+			}
+		}
+	}
+	update();
+}
+
+function lapped()
+{
+	if(laps < 30)
+	{
+		table.style.display = "";
+		laps++;
+		lap.style.display = "";
+		
+		var tr	= document.createElement("tr");
+		const arr = new Array(
+				addZero(laps) + "> ",
+				addZero(dhr) + ":" +
+				addZero(dmin) + ":"  +
+				addZero(dsec) + "." +
+				addZero(dmsec), " -> ",
+				addZero(dhrb) + ":" + 
+				addZero(dminb) + ":" +
+				addZero(dsecb) + "." +
+				addZero(dmsecb)
+			);
+			
+		tr.setAttribute("class", "lapped");
+		
+		for(var co = 0; co < arr.length; co++)
+		{
+			var td = document.createElement("td");
+			var content = document.createTextNode(arr[co]);
+			td.appendChild(content);
+			tr.appendChild(td);
+		}
+		tr.class = "tr";
+		
+		table.appendChild(tr);
+		
+		dmsecb	= 0;
+		dsecb	= 0;
+		dminb	= 0;
+		dhrb	= 0;
+		
+	}
+}
+
+function update()
+{
+
+	if(dmin > 0 || dsec > 0 || dmsec > 0)
+	{
+		if(laps < 30)
+		{
+			lap.style.display = "";
+		}
+		else
+		{
+			lap.style.display = "none";
+		}
+		if(eng == 0)
+		{
+			reset.style.display = "";
+		}
+		else
+		{
+			if(dhr <  60)
+			{
+				reset.style.display = "none";
+			}
+			else
+			{
+				reset.style.display = "";
+			}
+		}
+	}
+	else
+	{
+		if(dhr < 60)
+		{
+			reset.style.display = "none";
+		}
+		else
+		{
+			reset.style.display = "";
+		}
+		lap.style.display = "none";
+	}
+	
+	min.innerHTML	= addZero(dmin);
+	sec.innerHTML	= addZero(dsec);
+	msec.innerHTML	= addZero(dmsec);
+	hour.innerHTML	= addZero(dhr);
+}
+
+function addZero(v)
+{
+	if(v < 10)
+	{
+		return "0" + v;
+	}
+	return v;
+}
+</script>
+</html>

@@ -1,0 +1,564 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<head>
+<title>RPS</title>
+<script type="text/javascript">
+function del_block(x){
+	var res = '';
+	for(var i = 0; i<esc_blocks.length;i++){
+		if(esc_blocks[i] != x){
+			res += esc_blocks[i];
+		}
+	}
+	return res;
+}
+function asort(x){
+	var s = x.split('').sort();
+	var res = '', i;
+	for(i = 0; i < s.length;i++){
+		res += s[i];
+	}
+	return res;
+}
+function implode(x, y){
+	var res = '', i = 0;
+	for(i; i < y.length; i++){
+		q = (i ==y.length-1) ? '' : x;
+		res += y[i]+q;
+	}
+	return res;
+}
+function addZero(x){
+	return (x < 10) ? "0"+ x : x;
+}
+</script>
+<!--<link rel="stylesheet"href="bootstrap/css/bootstrap.min.css">-->
+<style type="text/css">
+body {
+	display: block;
+	white-space: nowrap;
+	padding: 0;
+	background-color: #fff;
+	width: 100%;
+	text-align: center;
+	font-size: 1em;
+	margin: auto; 
+	height: auto;
+}
+body, .a, #info{
+	max-width: 480px;
+	min-width: 240px;
+}
+.a {
+	margin: 5px;
+	border: 1px solid #c3c3c3;
+}
+.a, #info, button {
+	border-radius: 5px;
+}
+table, tr, td {
+	border-collapse: collapse; 
+}
+#board > tbody > tr > td {
+	width: 33.3333%;
+	border: 1px dashed #e53489;
+}
+table {
+	border: 1px solid #cecece;
+	margin: 2px auto 2px auto;
+	width: 65%;
+	background-color: #f0f0f0;
+}
+#score_board > tbody > tr > td {
+	width: 33.3333%;
+	font-weight: bold;
+	font-size: 0.7em;
+	color: #00b7ff;
+}
+.role {
+	margin: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 2px;
+	border-radius: 50%;
+	width: 45px;
+	height: 45px;
+}
+.role:hover{
+	padding: 1px;
+	background-color: #e0e0e0;
+}
+#info {
+	border: 1px solid #f0f0f0;
+	position: relative;
+	width: 98%;
+	font-size: 1em;
+	font-weight: bold;
+	margin: 5px auto 4px auto;
+	background-color: #cce5ff ;
+	color: #343434;
+}
+#user, #enemy {
+	box-shadow: 2px 3px 2px #909090;
+}
+#user {
+	background-color: #0000e5;
+	color: #fff;
+}
+#enemy {
+	background-color: #e50000;
+}
+button {
+	padding: 5px;
+	width: 40%;
+	background-color: #f0f0f0;
+	border: 1px solid #c3c3c3;
+	font-size: 0.8em;
+	margin: 3px;
+}
+</style>
+</head>
+<body>
+<div id="info">Welcome</div>
+<div class="a">
+<table id="score_board">
+	<tr>
+		<td id="path" colspan="3">00</td>
+	</tr>
+	<tr>
+		<td>Win</td>
+		<td>Draw</td>
+		<td>Lose</td>
+	</tr>
+	<tr>
+		<td id="w">00</td>
+		<td id="d">00</td>
+		<td id="l">00</td>
+	</tr>
+	<tr>
+		<td>You</td>
+		<td>Draw</td>
+		<td>Enemy</td>
+	</tr>
+	<tr>
+		<td id="ps">00</td>
+		<td id="ds">00</td>
+		<td id="es">00</td>
+	</tr>
+	<tr>
+		<td colspan="3">Dev: xIO</td>
+	</tr>
+</table>
+<table id="board">
+	<tr>
+		<td>
+			<div class="role" onclick="play(this)" title="0">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="1">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="2">&nbsp;</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div class="role" onclick="play(this)" title="3">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="4">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="5">&nbsp;</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div class="role" onclick="play(this)" title="6">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="7">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="8">&nbsp;</div>
+		</td>
+	</tr>
+</table>
+<br />
+<button onclick="start()" id="next_game">Next Game</button><button onclick="printData()">Print Data</
+</div>
+<script type="text/javascript">	
+function deepMind(data, a, b, turn, depth){
+	var blocks = [0,1,2,3,4,5,6,7,8];
+
+	const isMatch = function(x, y){
+		for(var i in y){
+			if(x == y[i]){ return x; }
+		} return false;
+	};
+	
+	const rmBlock = function(x, block){
+		var res = '', i;
+		for(i in block){
+			if(block[i] != x){
+				res += block[i];
+			}
+		} return res;
+	};
+	
+	const rand = function(block){ return block[Math.floor(Math.random()*block.length)]; };
+	
+	const brain = function(data, a, b, turn){
+		const board = {0:null,1:null,2:null,3:null,4:null,5:null,6:null,7:null,8:null};
+		//A = User, B =Empty Block, C = Enemy
+		const tricks = {'aab':'2','aba':'1','baa':'0','ccb':'2','cbc':'1','bcc':'0'};
+		const rules = ['012','345','678','036','147','258','048','246' ];
+		
+		const setBlock = function(block, opponent){
+			if(board[block]){
+				return true;
+			}
+			board[block] = (opponent) ? a : b;
+
+		}
+	
+		const check = function(){
+			var res = false;
+			for(var i in rules){
+				res = ((board[rules[i][0]] == a) && (board[rules[i][1]] == a) && (board[rules[i][2]] == a)) ? a : res;
+				res = ((board[rules[i][0]] == b) && (board[rules[i][1]] == b) && (board[rules[i][2]] == b)) ? b : res;
+				if(res != false) { break; }
+			}
+			return res;
+		};
+		
+		const type = function(x){
+			var res = 'b';
+			res = (board[x] == a) ? 'c' : res;
+			return (board[x] == b ) ? 'a' : res;
+		} //End Type
+		
+		var res = false;
+		var bls = '';
+		
+		for(var j in data){
+			var out = data[j];
+			for(var s in rules){
+				s = rules[s];
+				var com = type(s[0]) + type(s[1]) + type(s[2]);
+				if(tricks[com]){
+					var tr = s[tricks[com]];
+		
+					out = (isMatch(tr, bls.split(''))) ? out : tr;
+				}
+			}
+			
+			(!setBlock(out, turn));
+				bls += out;
+			
+			res = check();
+
+			if(res){ break; }
+			turn = (turn) ? false : true;
+		}
+//		console.log(bls);
+		return {'blocks': bls, 'result': res};
+	} //End brain
+	
+	//Remove used blocks 
+	for(var bls in data){
+		var matched = isMatch(data[bls], blocks);
+		blocks = (matched) ? rmBlock(matched, blocks) : blocks; 
+	}
+
+	var cout = 0;
+	
+	//Store results and prevent duplication
+	var tested = {};
+	
+	//The higher the depth,  the longer time to process
+	depth = (depth < 2 || !depth) ? 2 : depth; 
+	
+	while(cout < depth){
+		cout++;
+		var bls = '';
+		var temp = blocks;
+		
+		for(var bl in temp){
+			doRem = temp[Math.floor(Math.random()*temp.length)];
+			temp = rmBlock(doRem, temp);
+			bls += doRem;
+		}
+		
+		var train = data;
+		var train = train + bls;
+
+		if(train.indexOf(tested) == -1){
+			var br = brain(train,a,b, turn);
+			tested[br['blocks']] = br['result'];
+		}
+	}
+	return tested;
+}
+/*****End Deep mind*******/
+
+function _id(x){
+	return document.getElementById(x);
+}
+
+
+
+var esc_blocks = [0,1,2,3,4,5,6,7,8];
+
+const role = document.getElementsByClassName('role');;
+const rules = ['012','345','678','036','147','258','048','246' ];
+var got_win = false;
+
+var lever = false;;
+var fMove = 'e';
+var track = '';
+
+const scores = {user: 0, draw:0, enemy:0};
+const notes = {user: 'You Won!', draw:'Got Draw',enemy:'You Lose!'};
+
+document.body.onload = function(){
+	setInterval(function(){
+			if(got_win){
+				start();
+			}
+			if(track.length == 0){
+				fMove = (lever) ? false : true;
+			}
+			if(esc_blocks.length == 0){
+				got_win = 'draw';
+				setScore('draw');
+				esc_blocks = [0,1,2,3,4,5,6,7,8];
+			}
+			if(!lever){
+				play(enemy(), 'enemy');
+			}else{
+				play(random(),  'user');
+			}
+			
+
+	}, 700);
+};
+
+function random(){
+	const tricks = {'aab':'2','aba':'1','baa':'0','ccb':'2','cbc':'1','bcc':'0'};
+	
+	const type = function(x){
+		var res = 'b';
+		res = (role[x].id == 'user') ? 'c' : res;
+		return (role[x].id == 'enemy') ? 'a' : res;
+	}
+	var test = false; 
+	for(var j in rules){
+		var j = rules[j];
+		var com = type(j[0])+type(j[1])+type(j[2]);
+		if(tricks[com]){
+			test = j[tricks[com]];
+			break; 
+		}
+	}
+	
+	return (test) ? test : esc_blocks[Math.floor(Math.random()*esc_blocks.length)];
+}
+
+var picked = '';
+function enemy(){
+	const tricks = {'aab':'2','aba':'1','baa':'0','ccb':'2','cbc':'1','bcc':'0'};
+	dip('__');
+	 
+	const type = function(x){
+		var res = 'b';
+		res = (role[x].id == 'enemy') ? 'c' : res;
+		return (role[x].id == 'user') ? 'a' : res;
+	};
+	
+	var data = implode('', track);
+	
+	const rand = function(x){
+		return x[Math.floor(Math.random()*x.length)];
+	};
+	
+	const dec = function(x){
+		if(esc_blocks.length ==1){
+			console.log(x + ' : ' + esc_blocks[0]);
+			return esc_blocks[0];
+		}
+		for(var i in esc_blocks){
+		//console. log(x);
+			if(esc_blocks[i] == x){
+				return false;
+			}
+		}
+	}
+	//If picked is not empty and
+	if(picked > 0){
+		//opponent move is match to picked
+		//return the next line;
+		if(picked.substr(0, data.length) == data){
+			dip(picked + ' : current');
+			var orp = dec(picked.substr(data.length,  1));
+			if(orp){
+				return orp;
+			}
+		}
+	}
+	if(data.length > 0){
+
+		var test = false;;
+		
+		if(data.length >= 3){
+		/*
+			for(var j in rules){
+				var j = rules[j];
+				var com = type(j[0])+type(j[1])+type(j[2]);
+				if(tricks[com]){
+				//	test = j[tricks[com]];
+			//		break; 
+				}
+			} /**/
+		}
+
+		var deep = (test) ? data + test : data;
+		dip('Thinking...');
+		var temp = deepMind(deep, 'user', 'enemy', fMove, 250);
+		var win = [];
+		var draw = [];
+		var lose = [];
+		var cp = 0;
+
+		if(data.indexOf(win) == 0 && win.length == 0){
+		for(var i in temp){
+			cp++;
+			switch(temp[i]){
+				case 'user':
+					win[win.length] = i;
+				break; 
+				case 'enemy':
+					lose[lose.length] = i; 
+				break; 
+				case false:
+					draw[draw.length] = i; 
+			}
+		}
+		}
+		_id('w').innerHTML = win.length; 
+		_id('l').innerHTML = lose.length; 
+		_id('d').innerHTML = draw.length; 
+		_id('path').innerHTML = cp; 
+		var pick = false;
+		if(win.length > 0){
+			pick = (data.length == 1) ? rand(win) : win[0];
+			dip(pick + ' win');
+			picked = pick;
+			var p = dec(pick.substr(data.length, 1));
+			if(p){
+				return p;
+			}
+		}
+		if(draw.length > 0){
+			pick = rand(draw);
+			dip(pick + ' : Draw');
+			picked = pick;
+			var p = pick.substr(data.length, 1);
+			if(p){
+				return p;
+			}
+		}
+		if(lose.length > 0){
+			dip(rand(lose)+' : Lose');
+		}
+		//Last try
+		for(var go in win){
+			console.log(win[go]);
+			if(win[go].substr(0, data.length) == data){
+				var ff =  win[go].substr(data.length,  1);
+				dip(ff);
+				console.log(ff);
+				return ff;
+			}
+		}
+	}
+	return rand(esc_blocks);
+
+}
+var c = 0;
+
+function start(){
+	esc_blocks = [0,1,2,3,4,5,6,7,8];
+	got_win = false;
+	c = 0;
+	picked = '';
+	data = '';
+	track = '';
+	for(var i in role){
+		role[i].id = "";
+		role[i].innerHTML = '';
+	}
+	lever = (Math.random()*6 > 3) ? true : false;
+}
+function play(x, y){
+	if(got_win){
+		document.getElementById('info').innerHTML = notes[got_win];
+		return; 
+	}
+//	console.log(typeof x);
+	x = (typeof x == 'number' || typeof x == 'string') ? x : x.title;
+
+	y = (y) ? y : 'user';
+	if(!getBlock(x, y)){
+		document.getElementById('info').innerHTML = 'Block is taken';
+		console.log(x + ' : ' + y);
+		return;
+	}
+	lever = (lever) ? false : true;
+	return true;
+}
+function check(x){
+	for(var j = 0;j<rules.length;j++){
+		var index = rules[j];
+		if(index.length != 3){ return; }
+		if(role[index[0]].id === x && role[index[1]].id === x && role[index[2]].id === x){
+		//	scores[x] = scores[x] + 1;
+			setScore(x);
+			return true;
+		}
+	}
+}
+function setScore(x){
+	scores[x] = scores[x] + 1;
+	
+	document.getElementById('ps').innerHTML = scores['user'];
+	document.getElementById('ds').innerHTML = scores['draw'];
+	document.getElementById('es').innerHTML = scores['enemy'];
+}
+function getBlock(x, y){
+	if(role[x] != 'undefined'){
+		if(!role[x].id){
+			role[x].id = y;
+			role[x].innerHTML = (c++) + ' : ' + x;
+			track += x;
+			esc_blocks = del_block(x);
+			if(check(y)){
+				got_win = y;
+			}
+			return true;
+		}
+	}
+	return false;
+} /**/
+function dip(x){
+	document.getElementById('info').innerHTML = x;
+}
+function printData(){
+	for(var x in track){
+		document.write('\''+track[x]+'\',');
+	}
+}
+</script>
+</body>
+</html>

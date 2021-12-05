@@ -1,0 +1,337 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
+
+<head>
+<title>RPS</title>
+<script type="text/javascript">
+function del_block(x){
+	var res = '';
+	for(var i = 0; i<esc_blocks.length;i++){
+		if(esc_blocks[i] != x){
+			res += esc_blocks[i];
+		}
+	}
+	return res;
+}
+function asort(x){
+	x =  x.split('').sort();
+	return x.join("");
+}
+function addZero(x){
+	return (x < 10) ? "0"+ x : x;
+}
+</script>
+<!--<link rel="stylesheet"href="bootstrap/css/bootstrap.min.css">-->
+<style type="text/css">
+body {
+	display: block;
+	white-space: nowrap;
+	padding: 0;
+	background-color: #fff;
+	width: 100%;
+	text-align: center;
+	font-size: 1em;
+	margin: auto; 
+	height: auto;
+}
+body, .a, #info{
+	max-width: 480px;
+	min-width: 240px;
+}
+.a {
+	margin: 5px;
+	border: 1px solid #c3c3c3;
+}
+.a, #info, button {
+	border-radius: 5px;
+}
+table, tr, td {
+	border-collapse: collapse; 
+}
+#board > tbody > tr > td {
+	width: 33.3333%;
+	border: 1px dashed #e53489;
+}
+table {
+	border: 1px solid #cecece;
+	margin: 2px auto 2px auto;
+	width: 65%;
+	background-color: #f0f0f0;
+}
+#score_board > tbody > tr > td {
+	width: 33.3333%;
+	font-weight: bold;
+	font-size: 0.7em;
+	color: #00b7ff;
+}
+.role {
+	margin: 5px;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 2px;
+	border-radius: 50%;
+	width: 45px;
+	height: 45px;
+}
+.role:hover{
+	padding: 1px;
+	background-color: #e0e0e0;
+}
+#info {
+	border: 1px solid #f0f0f0;
+	position: relative;
+	width: 98%;
+	font-size: 1em;
+	font-weight: bold;
+	margin: 5px auto 4px auto;
+	background-color: #cce5ff ;
+	color: #343434;
+}
+#user, #enemy {
+	box-shadow: 2px 3px 2px #909090;
+}
+#user {
+	background-color: #0000e5;
+}
+#enemy {
+	background-color: #e50000;
+}
+button {
+	padding: 5px;
+	width: 40%;
+	background-color: #f0f0f0;
+	border: 1px solid #c3c3c3;
+	font-size: 0.8em;
+	margin: 3px;
+}
+</style>
+		<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+</head>
+<body>
+<div id="info">Welcome</div>
+<div class="a">
+<table id="score_board">
+	<tr>
+		<td>You</td>
+		<td>Draw</td>
+		<td>Enemy</td>
+	</tr>
+	<tr>
+		<td id="ps">00</td>
+		<td id="ds">00</td>
+		<td id="es">00</td>
+	</tr>
+	<tr>
+		<td colspan="3">Dev: xIO</td>
+	</tr>
+</table>
+<table id="board">
+	<tr>
+		<td>
+			<div class="role" onclick="play(this)" title="0">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="1">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="2">&nbsp;</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div class="role" onclick="play(this)" title="3">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="4">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="5">&nbsp;</div>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<div class="role" onclick="play(this)" title="6">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="7">&nbsp;</div>
+		</td>
+		<td>
+			<div class="role" onclick="play(this)" title="8">&nbsp;</div>
+		</td>
+	</tr>
+</table>
+<br />
+<button id="next_game">Next Game</button>
+</div>
+<script type="text/javascript">
+var esc_blocks = [0,1,2,3,4,5,6,7,8];
+const role = document.getElementsByClassName('role');;
+const rules = ['012','345','678','036','147','258','048','246' ];
+var got_win = false;
+var lever = false;;
+var wait = false;
+const scores = {user: 0, draw:0, enemy:0};
+const notes = {user: 'You Won!', draw:'Got Draw',enemy:'You Lose!'};
+const data = {'aab':'2','aba':'1','baa':'0','ccb':'2','cbc':'1','bcc':'0'};
+
+/* Under construction
+function Core(){
+	var esc_blocks = [0,1,2,3,4,5,6,7,8,9];
+	const get_taken = function(){
+		
+	}
+	
+	const test = function(){
+		var board = {
+			0 : 0, 1 : 0, 2 : 0,
+			3 : 0, 4 : 0, 5 : 0,
+			6 : 0, 7 : 0, 8 : 0,
+		};
+		
+		for(var i = 0; i 
+		
+	}
+
+
+
+
+} /**/
+
+
+function enemy(){
+	for(var i = 0;i < rules.length; i++){
+		var com = getType(rules[i][0])+getType(rules[i][1])+getType(rules[i][2]);	
+		if(data[com]){
+			return rules[i][data[com]];
+		}
+	}
+	return esc_blocks[Math.floor(Math.random()*esc_blocks.length)];
+}
+
+function getType(x){
+	var res = 'b';
+	res = (role[x].id == 'enemy') ? 'c' : res;
+	return (role[x].id == 'user') ? 'a' : res;
+}
+
+document.body.onload = function(){
+	setInterval(function(){
+		if(esc_blocks.length == 0 && got_win == false){
+			scores['draw'] = scores['draw'] + 1;
+			got_win = 'draw';
+			renderScores();
+		}
+		
+		if(got_win){
+			document.querySelector('#info').innerHTML = (got_win.indexOf(notes)) ? notes[got_win] : 'Code Modified';
+			renderScores();
+		}else{
+			document.querySelector('#info').innerHTML = (lever) ? 'Your turn!' : 'Enemy\'s turn';
+		}
+		
+		/**
+		if(got_win || esc_blocks.length == 0){
+			reset();
+		} /**/
+		
+		if(lever == false && got_win == false){
+			var e = enemy();
+			if(!getBlock(e, 'enemy')){
+				lever = true;
+			}
+	/**	}else {
+			var e = enemy();
+			if(!getBlock(e, 'user')){
+				lever = false;
+			} /**/
+		}
+	}, 500);
+};
+
+function setScore(x){
+	if(x.indexOf(scores)){
+		scores[x] = scores[x];
+	}
+	renderScores();
+}
+
+function renderScores(){
+	document.querySelector('#ds').innerHTML = addZero(scores['draw']);
+	document.querySelector('#ps').innerHTML = addZero(scores['user']);
+	document.querySelector('#es').innerHTML = addZero(scores['enemy']);
+}
+document.querySelector('#next_game').addEventListener('click', promptReset);
+function promptReset(){
+	document.querySelector('#info').innerHTML = 'Resuming game...';
+	if(esc_blocks.length != 0 && got_win === false){
+		var request = confirm('Are you sure to clear the game?\nCurrent game will not ');
+	}
+	if(request || got_win || (esc_blocks.length == 0)){
+		reset();
+	}
+}
+function reset(){
+	esc_blocks = [0,1,2,3,4,5,6,7,8];
+	got_win = false;
+	wait = false;
+	var i = 0;
+	for(i; i < role.length; i++){
+		role[i].id = '';
+	}
+//	lever = true;
+}
+
+function check(x){
+	for(var j = 0;j<rules.length;j++){
+		var index = rules[j];
+		if(index.length != 3){ return; }
+		if(role[index[0]].id === x && role[index[1]].id === x && role[index[2]].id === x){
+			scores[x] = scores[x] + 1;
+			return true;
+		}
+	}
+}
+function play(x){
+	if(lever == false && !got_win){
+		alert('Wait...Enemy\'s turn!');
+		return;
+	}
+	if(got_win){
+		alert(notes[got_win]);
+		return; 
+	}
+	if(getBlock(x.title, 'user')){
+		alert('Block is taken');
+		return;
+	}
+	lever = false;
+}
+
+function getBlock(x, y){
+	if(role[x] != 'undefined'){
+		if(!role[x].id){
+			role[x].id = y;
+			esc_blocks = del_block(x);
+			if(check(y)){
+				got_win = y;
+			}
+			return;
+		}
+	}
+	return true;
+} /**/
+</script>
+</body>
+</html>

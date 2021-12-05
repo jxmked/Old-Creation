@@ -1,0 +1,483 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
+
+<html>
+<head>
+	<title>Hex Converter</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<style type="text/css">
+	body, .dw{
+		max-width: 480px;
+		min-width: 240px;
+	}
+	body {
+		margin: 0 auto 0 auto;
+		white-space: nowrap;
+	}
+	.xbtn-group:first-child > div {
+		width: 25%;
+		padding: 2;
+	}
+	.xbtn[data='on']{
+		border: 1px outset #ff0000;
+		color: #00b7ff;
+	}	
+	#menu_btn {
+		float: left;
+		z-index: 9999;
+		position: fixed;
+		left: 2px;
+		top: 7px;
+		border-radius: 10px;
+		padding: 5px 7px 5px 7px;
+		background-color: rgba(7,253,202, 0.3);
+	}
+	</style>
+			<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+	<script src="jquery-1.10.2.min.js"></script>
+	<!-- <script src="helpers.js"></script> -->
+</head>
+<body>
+	<div style="margin: 0 2px 10px 2px; border: 1px solid #eeeeee; border-radius: 0 0 15px 15px;" class="nav text-center bg-info">
+		<div id="menu_btn" style="display:none">Back</div>
+		<h4 class="">Hex Converter</h4>
+	</div>
+	
+	<div class="col-sm-12 col-xs-12 col-md-10">
+		<div class="container dw">
+			<!--Input -->
+			<div class="row">
+				<div class="panel">
+					<textarea id="input" rows="3" class="form-control" ></textarea>
+				</div>
+			</div>
+			
+			<!--Navigation And Buttons -->
+			<div class="row">
+				<div class="panel">
+					
+					<!-- Button Auto, Spaces, U/L RCases-->
+					<div style="width:100%;margin:0;padding:0;" class="xbtn-group btn btn-group btn-group-sm">
+						<div data="" title="Auto|Manual" class="xbtn btn btn-default" id="lever"></div>
+						<div data="" title="Spaces" class="xbtn btn btn-default" id="spc"></div>
+						<div data="" title="U/L" class="xbtn btn btn-default" id="ul"></div>
+						<div data="" title="RCases" class="xbtn btn btn-default" id="rcs"></div>
+					</div>
+					
+					<!-- Button (To String, To Hex) `Only shows if switched to Manual`, Convert -->
+					<div>
+						<div id="two" style="display:block;margin:0;padding:0;width:100%;">
+							<div class="xbtn-group btn btn-group btn-group-sm" style="width:100%;margin:0;padding:0;border:0;">
+								<div id="tostr" data="hex" title="To String" class="event-btn xbtn btn btn-default" style="width: 50%;"></div>
+								<div data="string" title="To Hex" class="event-btn xbtn btn btn-default" style="width: 50%;"></div>
+							</div>
+						</div>
+						
+						<div id="convert" class="xbtn-group btn btn-group btn-group-sm" style="width:100%;margin: 0;padding:0;border:0;">
+							<div data="auto" title="Convert" class="event-btn xbtn btn btn-default" style="width:100%"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<!--Output-->
+			<div class="row">
+				<div class="panel">
+					<textarea id="output" rows="5" class="form-control"></textarea>
+				</div>
+			</div>
+			
+			<!--Blockqoute-->
+			<div class="row">
+				<div class="panel text-center">
+					<h4>Dev: xCreat10n</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<!-- <script src="data.js"></script> -->
+<!-- <script src="functions.js"></script> -->
+<script type="text/javascript">
+'use strict'
+var hexs = "abcdef0123456789".split("");
+var defS = " ";
+var method; //Current function
+var valids = hexs;
+var g_temp = [];
+
+valids.push(defS);
+
+function keyUp() {
+	var val = $("#input").val();
+
+	var arrVal = val.toLowerCase().split("");
+
+	if($("#lever").attr("data") == "Auto") {
+		if(isHex(arrVal)) {
+			//True Hex
+
+			//Check if spaces are existing in the given Hex and 
+			//if ready to translate to string
+			var arr = check(val.toLowerCase()), arrHex;
+
+			method = "hex";
+
+			if(arr != false) { //Reafy to translate to string
+
+				arrHex = arr;
+
+			} else { //Invalid spaces or no spaces
+
+				arrHex = spliceToHex(val.toLowerCase(), 2);
+
+			} //End if arr is not equal to false (To be sure)
+
+			g_temp = toStr(arrHex);
+
+		} else { //Input has an ASCII value needed to translate
+
+			method = "string";
+
+			g_temp = toHex(val.split("")); //We need their cases
+
+		} //End if isHex
+
+	} else { //Manual
+
+		if(!isHex(arrVal))
+		{
+
+			$("#tostr").text("Not a hex");
+			$("#tostr").addClass("alert-danger");
+			$("#tostr").attr("disabled", "disabled");
+
+		} else {
+
+			$("#tostr").text("To String");
+			$("#tostr").removeClass("alert-danger");
+			$("#tostr").removeAttr("disabled");
+
+		} //End if not isHex
+	} //End if lever is set to auto
+
+	render();
+
+} //End keyUp function
+
+function render() {
+
+	var res = g_temp;
+	//spc ul rcs
+	if(method == "string") {
+		//ToHex
+
+		//Random cases
+		if($("#rcs").attr("data") == "on" && $("#ul").attr("data") == "off") {
+
+			res = res.map(function(str) {
+
+				var out = [], index;
+
+				var arr = str.split("");
+
+				for(index in arr) {
+
+					out.push((Math.floor(Math.random() * 10) > 5) ? arr[index].toUpperCase() : arr[index].toLowerCase());
+
+				} //End For index in arr
+
+				return out.join("");
+
+			}); //End Map of each Hex
+		} //End if Random Cases is "on" and Upper/Lower is "off"
+
+		//Add/Remove spaces
+		res = ($("#spc").attr("data") == "on") ? res.join("") : res.join(defS);
+
+		//Upper or Lower Cases
+		res = ($("#ul").attr("data") == "on" && $("rcs").attr("data") == "off") ? res.toUpperCase() : res;
+
+	} else {
+		res = res.join(""); 
+	} //End if method is equal to string 
+
+	$("#output").val(res); //Output
+}
+
+function isHex(arr) {
+	for(var index in arr) {
+
+		if(valids.indexOf(arr[index]) == -1) return false; //Not a hex
+
+	} 
+
+	return true; //True hex
+} //End isHex
+
+function check(str) {
+	var arr = str.split(defS);
+	var res = [];
+	for(var index in arr) {
+
+		if(arr[index].length == 2) res.push(arr[index]);
+
+	} //End for index in array loop
+	//Check the length of the res if it is match if we divided the joined arr length to size of the hex (2)
+
+	return (res.length == (arr.join("").length / 2)) ? arr : false;
+} //End check
+
+function spliceToHex(str, len) {
+
+	var res = [];
+
+	var pos = 0; //Current position 
+
+	//Remove all spaces (If existing) to try to clarify the output
+	var split = str.split(" ");
+
+	str = (split.length == 1) ? str : split.join("");
+
+	//if the length of str is equal to the given len, return it in array type
+	if(str.length == len) return [str];
+
+	while(true) {
+
+		var tmp = str.substr(pos, len);
+
+		//Check if the length is equal to given len
+		if(tmp.length == len) {
+
+			res.push(tmp);
+
+			pos += len;
+
+			continue; 
+		} //End if length of temporary variable is equal to the given len
+
+		break;
+	} //End while true
+
+	return res;
+} //End spliceToHex
+
+/****Main Function****/
+//Translate from Hex to String
+function toStr(arr) {
+
+	return arr.map(function(hex) {
+
+		return String.fromCharCode(parseInt(hex, 16));
+		
+	}); //End Map
+} //end toStr Function
+
+//Translate from ASCII to Hex
+function toHex(arr) {
+
+	return arr.map(function(char) {
+
+		return Number(char.charCodeAt(0)).toString(16);
+
+	}); //End Map
+} //End toHex Function
+
+/****End Main Function****/
+
+function toggle() {
+
+	if($("#lever").attr("data") == "Auto") {
+
+		$("#two").fadeOut(0);
+		$("#convert").fadeIn(300);
+
+	} else {
+
+		$("#two").fadeIn(300);
+		$("#convert").fadeOut(0);
+
+	} //end if lever button is equal to auto
+}
+
+$(document).ready(function() {
+
+	$(".xbtn").map(function(item) {
+
+		var item = $(this).attr("title").split("|");
+
+		if(item.length != 1) {
+
+			$(this).attr("data", item[0]);
+
+		} //End if length of item is not equal to 1
+
+		$(this).text(item[0]);
+
+	}); //End map
+
+	toggle();
+
+}); //End if document nis ready
+
+$(".xbtn").click(function() {
+	/***
+		This function is a second version of XBTN from previous Project (String Helper).
+		Instead of storing an Int from data, this function will store the actual text
+		that on display. Modifying those text may cause of error if not handled well.
+	***/
+	var item = $(this).attr("title").split("|"); //From str to arr. | is our separator between text
+
+	if(item.length == 1) {
+
+		var title = $(this).attr("title");
+
+		switch(title) {
+			case "Convert":
+			case "To String":
+			case "To Hex":
+				keyUp();
+				return; 
+		} //Wnd switch
+
+		var data = ($(this).attr("data") == "on") ? "off" : "on";
+
+		$(this).attr("data", data);
+
+		//Its either U/L and RCases is on at the same time
+		//One of them is useless if both them is on at the same time
+		if(title == "U/L" && data == "on") {
+
+			$("#rcs").attr("data", "off");
+
+		} else if (title == "RCases" && data == "on") {
+
+			$("#ul").attr("data", "off");
+
+		} //End if title is equal to U/L and data is equal to "on"
+
+		keyUp();
+
+		return; //Halt the execution
+	} //End if length of item is equal to 1
+
+	var pos = item.indexOf($(this).attr("data")); //Find where the current location of data in item
+
+	//If the current data is not existing or the position in item is not existing, bring pos back to zero
+	pos = (pos == -1 || (typeof item[(pos + 1)] == "undefined")) ? 0 : (pos + 1);
+
+	$(this).attr("data", item[pos]).text(item[pos]); 
+
+	keyUp();
+}); //End event function for xbtn 
+
+$("#lever").click(toggle);
+$("#input").keyup(keyUp);
+
+$(".event-btn").click(function() {
+
+	switch($(this).text()) {
+		case "To Hex": //To hex
+
+			var val = $("#input").val();
+
+			g_temp = toHex(val.split(""));
+
+			render();
+
+			break; 
+
+		case "To String": //To string
+			var val = $("#input").val().toLowerCase();
+
+			if(!isHex(val.split(""))) return;
+
+			//Check if spaces are existing in the given Hex and 
+			//if ready to translate to string
+			var arr = check(val), arrHex;
+	
+			if(arr != false) { //Reafy to translate to string
+					
+				arrHex = arr;
+				
+			} else { //Invalid spaces or no spaces
+			
+				arrHex = spliceToHex(val, 2);
+				
+			} //End if arr is not equal to false (To be sure)
+			
+			g_temp = toStr(arrHex);
+			
+			render();
+			
+			break; 
+			
+		default:
+			keyUp();
+	} //End switch 
+}); //End on click event
+
+/***Added Feature to back to xCreat10n Home page*****/
+function get(index){
+	var res = {};
+	var url = window.location.toString();	
+	url.substr(url.indexOf("?") + 1).split("&").map(function(item){
+		var val = item.split("=");
+		res[val[0]] = val[1];
+	}); return res[index];
+}
+
+$(document).ready(function(){
+	var loc = get("loc");
+	if(loc){
+		$("#menu_btn").removeAttr("style");
+
+		$("#menu_btn").click(function(){
+			var res = loc.substr(1).split("%").map(function(hex) {
+				return String.fromCharCode(parseInt(hex, 16));
+			}).join("");
+			window.location = res;
+		});
+	}
+});
+/***Event Listeners***/
+/****Notes 
+
+Started at June 25, 2020
+Completed at June 26, 2020
+
+Author Jovanni De Guia
+
+Frameworks JQuery & Bootstrap Css
+
+Main function of this page.
+	Translate From String to Hex
+	Translate From Hex to String
+	
+Notes about Buttons
+-Auto
+	Switch between Auto detect and Manually Push the button 
+	
+-Spaces = Spacing
+	Add spaces between Roman characters
+	
+-U/L = Uppercase/Lowercase
+	Use Lowercase instead of Uppercase
+	
+-RCases = Random Cases
+	Randomize the Cases of each Characters (I just wanted to add. Hahaha)
+
+****/
+</script>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
+
+<html>
+<head>
+<title>Age Calculator</title>
+		<!-- Google Analytics -->
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-XXXXX-Y', 'auto');
+ga('send', 'pageview');
+</script>
+<!-- End Google Analytics -->
+<script type="text/javascript">
+function id(x){
+	return document.getElementById(x); 
+}
+var months = new Array('','January','February','March','April','May','June','July','August','September','October','November','December'); 
+function sel(x, y, z, set, mhs){
+
+	var ll = 0;
+	do {
+		var ne = document.createElement("option");
+		if(mhs){
+			var co = document.createTextNode(mhs[y]);
+		}else{
+			var co = document.createTextNode(y);
+		}
+		ne.setAttribute("value", y);
+		if(set == y){
+			ne.setAttribute("selected", "selected");
+		}
+		ne.appendChild(co);
+		document.getElementById(x).appendChild(ne);
+		if(ll > 500 || y == z){ break; } ll = ll + 1;
+		y = (y > z) ? y - 1:y + 1;
+	}while(true);
+}
+/**/
+</script>
+
+<style type="text/css">
+body {
+	margin: 0;
+	padding: 0;
+
+}
+select{
+	border: 2px outset #999999;
+	margin: auto;
+	padding: 0;
+}
+select:focus {
+	color: #000;
+}
+table, tr, td {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	text-align: center; 
+}
+table{
+	border: 2px solid #aaaaaa;
+	box-shadow: 2px 3px 2px #999999;
+	margin: auto;
+	margin-top: 50px;
+}
+blockquote {
+	text-align: center;
+	letter-spacing: 10px;
+}
+</style>
+</head>
+<body>
+<blockquote><b>Age Calculator</b></blockquote>
+<table>
+	<tr>
+		<td colspan="3">Current Date</td>
+	</tr>
+	<tr>
+		<td>
+			<select onchange="age()" id="month"></select>
+			<select onchange="age()" id="day"></select>
+			<select onchange="age()" id="year"></select>
+		</td>
+	</tr>
+	<tr>
+		<th colspan="3">Age: <code id="age">0</code></th>
+	</tr>
+	<tr>
+		<td colspan="3">Birthday</td>
+	</tr>
+	<tr>
+		<td>
+			<select onchange="age()" id="m"></select>
+			<select onchange="age()" id="d"></select>
+			<select onchange="age()" id="y"></select>
+		</td>
+	</tr>
+</table>
+<span id="ss"></span>
+</body>
+<script type="text/javascript">
+var mb = {
+	'd' : 25,
+	'm' : 9,
+	'y' : 2000
+}
+window.onload = function(){
+	var d = new Date(),
+		mo = d.getMonth()+1;
+		da = d.getDate();
+		ye = d.getYear()+1900;
+		sel('month', 1, 12, mo, months);
+		sel('day', 1, 32, da);
+		sel('year', 2150, 1875, ye);
+		sel("d", 1,32, mb.d);
+		sel("m", 1,12, mb.m, months);
+		sel("y", 2150, 1875, mb.y);
+		age();
+}
+
+function age(){
+	var x = id("d").value;
+	var y = id("m").value;
+	var z = id("y").value;
+	var cx = id("day").value;
+	var cy = id("month").value;
+	var cz = id("year").value;
+	
+	var ms = y - cy;
+	var yo = cz - z;
+	
+	if(ms < 0){
+		ms = -1;
+	}
+
+	var res;
+	if(z < cz){
+		res = yo-1;
+		if(ms == 0){
+			if(x <= cx){
+				res = yo;
+			}
+		}else if(ms < 0){
+			res = yo;
+		}
+	}else{
+		res = 0;
+	}
+	id('age').innerHTML = res;
+}
+</script>
+</html>

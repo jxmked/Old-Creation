@@ -1,0 +1,274 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<html>
+<head>
+	<title>String to Elements</title>
+	<link rel="stylesheet" href="bootstrap.min.css">
+	<style type="text/css">
+		body, .dw{
+			max-width: 480px;
+			min-width: 240px;
+		}
+		body {
+			margin: 0 auto 0 auto;
+			white-space: nowrap;
+		}
+		#menu_btn {
+			float: left;
+			z-index: 9999;
+			position: fixed;
+			left: 2px;
+			top: 7px;
+			border-radius: 10px;
+			padding: 5px 7px 5px 7px;
+			background-color: rgba(7,253,202, 0.3);
+		}
+
+	</style>
+	<script src="jquery-1.10.2.min.js"></script>
+	<!--<script src="helpers.js"></script> -->
+
+</head>
+<body>
+	<div style="margin: 0 2px 10px 2px; border: 1px solid #eeeeee; border-radius: 0 0 15px 15px;" class="nav text-center bg-info">
+		<div id="menu_btn" style="display:none">Back</div>
+		<h4 class="">String to Elements<sub>Beta</sub></h4>
+	</div>
+
+	<div class="col-sm-12 col-xs-12 col-md-10">
+		<div class="container dw" id="pl">
+			
+			<!--Input-->
+			<div class="row">
+				<div class="panel">
+					<textarea type="text" class="form-control" rows="3" id="input" autofocus="autofocus"></textarea>
+				</div>
+			</div>
+			
+			<!--Navigation and Buttons-->
+			<div class="row">
+				<div class="panel">
+					<div id="convert" class="btn btn-default btn-sm" style="width:100%">Run</div>
+				</div>
+			</div>
+			
+			<!--Output-->
+			<div class="row">
+				<div class="panel">
+					<textarea type="text" class="form-control" rows="7" id="output"></textarea>
+				</div>
+			</div>
+		
+			<!--Blockqoute-->
+			<div class="row">
+				<div class="panel text-center">
+					<h4>Dev: xCreat10n</h4>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="data.js"></script>
+<!--<script src="functions.js"></script> -->
+<script type="text/javascript">
+var btnRules = {};
+/**String Method ***/
+String.prototype.trim = function(){
+	var str = this;
+	var trim = function(str){
+	str = (str.charAt(0) == " ") ? str.substr(1) : str;
+	return (str.substr(-1) == " ") ?  str.substr(0, (str.length - 1)) : str;
+	};
+	
+	do {
+		str = trim(str);
+	} while(str.charAt(0) == " " || str.substr(-1) == " ");
+	
+	return str;
+};
+
+String.prototype.ucfirst = function(){
+	return this.charAt(0).toUpperCase() + this.substr(1);
+};
+/****** End String method*****/
+
+//Making these function as a method for array may cause error in
+//for loop.
+function random(arr){
+	return Math.floor(Math.random() * arr.length);
+}
+
+function toLowerCase(arr){
+	return arr.map(function(item){
+		return item.toLowerCase();
+	});
+}
+
+/*** End Array helpers ****/
+
+function keyUp(){
+	var val = $("#input").val();
+	
+	val = val.split(" ").join("");
+	
+	var res = val.split("").map(function(char){
+		return toSymbol(char);
+	});
+
+	$("#output").val(res.join(" + "));
+}
+
+//Main Function 
+//Translate Each character to Elements' symbol
+function toSymbol(char){
+	var res = getData();
+	var elements = getElement();
+	var getSymbols = function(char, remove){
+	
+		char = char.toLowerCase()
+		
+		var inv = "abcdefghiklmnopqrstuvwxyz".split("");
+		
+		if(inv.indexOf(char) == -1 || char.length == 0) return char.toUpperCase();
+
+		var symbols = toLowerCase(res)
+		
+		if(remove){
+			//We've to use for loop to stop execution if founded
+			for(var index in symbols){
+				if(symbols[index] == char){
+					logd(char);
+					return elements[symbols[index]];
+				}
+			}
+		}
+		
+		var col = [];
+		//Get all symbols with given char
+		symbols.map(function(item){
+			if(item.toLowerCase().indexOf(char) != -1) col.push(item);
+		});
+		
+		//Check if there is single Char symbol(s) and return it
+		var picked = getLittle(col);
+		
+	//	var picked = col;
+	
+		if(typeof picked == "string" && picked.length == 1) return elements[picked.ucfirst()];
+		
+		var a = picked[random(picked)];
+		
+		if(a.length == 1) return a.ucfirst();;
+		
+		//Remove the given char from others
+		var toRemove = a.replace(char, "");
+		
+		//If the rest from variable "a" has exact match from elements
+		//Return it
+		if(toRemove.length == 1 || toRemove.length == 2){
+			if(symbols.indexOf(toRemove) != -1){
+				return "(" + elements[a.ucfirst()] + " - " + elements[toRemove.ucfirst()] + ")";
+			}
+		}
+		
+		var f = [];
+		
+		//Recursive and get the Value
+		toRemove.split("").map(function(c){
+			f.push(getSymbols(c, true));
+		});
+		
+		return "(" + elements[a.ucfirst()]  + " - " + f.join(" - ") + ")";
+	};
+	
+	
+	var a = getSymbols(char);
+	
+	return a;
+} /**/
+
+//Get from array the smallest length of string
+//Output Array | String
+function getLittle(arr){
+	
+	var f = true;
+	var isnew = true;
+	var sm = "";
+	var same = [];
+	
+	arr.map(function(item){
+		var ilen = item.length; 
+		isnew = false;
+		
+		if(f){
+			sm = item;
+			same.push(item);
+			f = false;
+		}else{
+			if(ilen < sm.length){
+				sm = item;
+				isnew = true;
+			}else if(ilen == sm.length){
+				same.push(item);
+			}
+		}
+		if(isnew){ same = [item]; }
+	});
+	return (same.length == 1 && sm.length == 1) ? sm : same;
+}
+
+/***Added Feature to back to xCreat10n Home page*****/
+function get(index){
+	var res = {};
+	var url = window.location.toString();	
+	url.substr(url.indexOf("?") + 1).split("&").map(function(item){
+		var val = item.split("=");
+		res[val[0]] = val[1];
+	});
+	return res[index];
+}
+
+$(document).ready(function(){
+	var loc = get("loc");
+	if(loc){
+		$("#menu_btn").removeAttr("style");
+
+		$("#menu_btn").click(function(){
+			var res = loc.substr(1).split("%").map(function(hex) {
+				return String.fromCharCode(parseInt(hex, 16));
+			}).join("");
+			window.location = res;
+		});
+	}
+});
+
+/***Event Listeners***/
+
+//$("#input").keyup(keyUp); //May slow down the system on every stroke
+$("#convert").click(keyUp);
+
+/********Note
+	String to Elements
+	Beta
+	
+Author Jovanni De Guia
+
+Started at June 28, 2020
+Created at June 30, 2020
+
+
+
+******Debug and Fixed *****
+
+
+Main function
+ -Translate each character to Element symbol then
+ 	symbol to element's name
+ 	
+ -Unreversable Output---
+ -No Customization Of output
+ -Just Type and run
+
+*******/
+</script>
+</html>
