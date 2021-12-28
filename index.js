@@ -70,8 +70,6 @@ var index = [
 		"link" : "JavaScript/String to Elements/v1.1 beta/index.html",
 		"version" : "Beta v1.1"
 	}
-	
-	
 ];
 
 function getData(){

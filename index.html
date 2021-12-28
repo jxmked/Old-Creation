@@ -1,9 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
-
 <html>
 <head>
+<meta name="viewport" content="width=320, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="google-site-verification" content="1kiC4tvdf6sjk9BGi__J6cU2bLCBk5KoXSMgTFNx8V0" />
 <title>Old xCreat10n</title>
 	<style type="text/css">
 		body {
@@ -13,20 +12,11 @@
 			padding: 0;
 			background-color: #fff;
 			width: 320px;
-			color: #232323;
 			text-align: center;
 			font-size: 1em;
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; 
 			line-height: 1.42857143; 
-			color: #555555; 
-		//	background-image: url('bg-imgs/08.jpg');
-		//	background-color: #ffffff;
-			background-repeat: no-repeat;
-			background-position: center center;
-	//		background-origin: padding-box;
-			background-size: cover;
-			height: 100%;
-			background-attachment: fixed;
+			color: #555555;
 		}
 		h4{
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -56,7 +46,6 @@
 			width: 100%;
 		}
 		#item-list > div > div > div  > div {
-	//		margin: 5% auto 0px auto;
 			width: 100%;
 			overflow: hidden;
 			height: auto;
@@ -98,7 +87,6 @@
 		}
 		body > div:first-child, body > div:nth-child(2){
 			text-align: center;
-	//		background-color: #d9edf7;
 			background-color: rgba(200, 240, 245, 0.7);
 			position: fixed;
 			width: 310px;
@@ -124,49 +112,23 @@
 			float:left;
 			width: 100%;
 			height: 100%;
-			
 		}
 	</style>
-	
-	<!-- Google Analytics -->
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-XXXXX-Y', 'auto');
-ga('send', 'pageview');
-</script>
-<!-- End Google Analytics -->
-	
 </head>
 <body>
 	<div>
-		<h4 class="">xCreat10n<sup>Demo</sup></h4>
+		<h4 class="">Old xCreat10n</h4>
 
 	</div>
 	<!-- Taking off this one may cause of problem on item list -->	
 	<div>
-		<h4 class="">xCreat10n</h4>
+		<h4 class="">p</h4>
 	</div>
 	
 	<noscript>JavaScript is Off</noscript>
 	
 	<div id="item-list" class="container">
-		<div id="display">
-		<!--
-			<div>
-				<div>
-					<div>
-						<h4>Title</h4>
-						<p>v2.0</p>
-						<p>Play</p>
-					</div>
-				</div>
-			</div> -->
-			
-		</div>
+		<div id="display"></div>
 	</div>
 	<div class="dummy"></div>
 </body>
@@ -175,34 +137,11 @@ ga('send', 'pageview');
 <script type="text/javascript">
 'use strict'
 
-var addIconColor = 0;
-var addBGImg = 0;
-var randBGImg = 0;
-
-var colors = [
-		"#2eb74d","#f55d87","#d898a7","#42c3ea","#c979bc","#d1c6a6"
-	];
-	
-var bgs = ["01","02","03","04","05","06","07","08","09","10","11","12"];
-
 document.body.onload = function(){
 	var index = getData();
-	if(addBGImg)
-    	document.body.setAttribute("style","background-image:url('bg-imgs/" + rand(bgs) + ".jpg')");
-    
-    if(randBGImg)
-    	bgRun();
-    	
-//	tab();
 	render(index);
 
 };
-
-function bgRun(){
-	setInterval(function(){
-		document.body.setAttribute("style","background-image:url('bg-imgs/" + rand(bgs) + ".jpg')");
-	}, 5000);
-}
 
 function render(index){
 	index.map(function(data){
@@ -242,24 +181,16 @@ function render(index){
 	
 		var c = document.createElement("div");
 		c.setAttribute("onclick", "run ('" + link + "')");
-	    
-	    if(addIconColor)
-		    c.setAttribute("style", "background-color:" + rand(colors));
-	
+		
 		c.appendChild(b);
 		
 		document.getElementById('display').appendChild(c); 
 	});
 }
 
-function rand(arr){
-	return arr[Math.floor(Math.random() * arr.length)];
-}
-
 function run(str){
 	document.location.href = document.location.href + str;
 } 
-
 /**Helpers**/
 function urlEncode(str){
 	return "%" + str.split("").map(function(char) {
