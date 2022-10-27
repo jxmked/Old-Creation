@@ -4,8 +4,51 @@
 
 <html>
 <head>
-	<title>Hex Converter</title>
+	<title>Hex Converter &dash; v1.1</title>
 	<link rel="stylesheet" href="bootstrap.min.css">
+    <script type="application/javascript">
+        window.XIO = window.XIO || {};
+        window.XIO.ENVIRONMENT_MODE = window.XIO.ENVIRONMENT_MODE || "dev";
+        
+        function onClickEvent(element) {
+            var url = element.getAttribute("href");
+
+            element.addEventListener("click", function() {
+                gtag("event", "url_clicked", {
+                    "social_name": url
+                });
+            });
+        }
+
+        // Google tag (gtag.js)
+        (function(id) {
+            if (window.location.protocol.toString() != "https:")
+                return;
+            
+            window.XIO = window.XIO || {};
+            window.XIO.ENVIRONMENT_MODE = "prod";
+            
+            var scr = document.createElement("script");
+            scr.setAttribute("src", "https://www.googletagmanager.com/gtag/js?id=" + id);
+            scr.async = true;
+            scr.setAttribute("type", "application/javascript");
+
+            document.getElementsByTagName('head')[0].appendChild(scr);
+
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = window.gtag || function() {
+                dataLayer.push(arguments);
+            };
+
+            gtag('js', new Date());
+            gtag('config', id);
+            document.addEventListener("DOMContentLoaded", function() {
+                Array.prototype.forEach.call(document.getElementsByClassName("listen-on-click"), function(element) {
+                    onClickEvent(element);
+                });
+            });
+        }("G-JPJZGW7PW6"));
+    </script>
 	<style type="text/css">
 	body, .dw{
 		max-width: 480px;
@@ -34,17 +77,6 @@
 		background-color: rgba(7,253,202, 0.3);
 	}
 	</style>
-			<!-- Google Analytics -->
-<script>
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-ga('create', 'UA-XXXXX-Y', 'auto');
-ga('send', 'pageview');
-</script>
-<!-- End Google Analytics -->
 	<script src="jquery-1.10.2.min.js"></script>
 	<!-- <script src="helpers.js"></script> -->
 </head>

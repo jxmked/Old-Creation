@@ -2,7 +2,50 @@
 <meta name="viewport" content="initial-scale=1, width=device-width">
 <html>
 <head>
-<title></title>
+<title>Lap Timer &dash; v2.2</title>
+    <script type="application/javascript">
+        window.XIO = window.XIO || {};
+        window.XIO.ENVIRONMENT_MODE = window.XIO.ENVIRONMENT_MODE || "dev";
+        
+        function onClickEvent(element) {
+            var url = element.getAttribute("href");
+
+            element.addEventListener("click", function() {
+                gtag("event", "url_clicked", {
+                    "social_name": url
+                });
+            });
+        }
+
+        // Google tag (gtag.js)
+        (function(id) {
+            if (window.location.protocol.toString() != "https:")
+                return;
+            
+            window.XIO = window.XIO || {};
+            window.XIO.ENVIRONMENT_MODE = "prod";
+            
+            var scr = document.createElement("script");
+            scr.setAttribute("src", "https://www.googletagmanager.com/gtag/js?id=" + id);
+            scr.async = true;
+            scr.setAttribute("type", "application/javascript");
+
+            document.getElementsByTagName('head')[0].appendChild(scr);
+
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = window.gtag || function() {
+                dataLayer.push(arguments);
+            };
+
+            gtag('js', new Date());
+            gtag('config', id);
+            document.addEventListener("DOMContentLoaded", function() {
+                Array.prototype.forEach.call(document.getElementsByClassName("listen-on-click"), function(element) {
+                    onClickEvent(element);
+                });
+            });
+        }("G-JPJZGW7PW6"));
+    </script>
 <style type="text/css">
 body {
 	display: block;

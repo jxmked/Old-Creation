@@ -10,6 +10,12 @@
 > I will keep those errors, mistakes and some inappropriate
 > things just to remember how stupid I am. 
 
+> Everything in here is written in an [android phone](https://m.gsmarena.com/samsung_galaxy_s_ii_lte_i727r-4376.php)
+> running on [4.1.2](https://en.m.wikipedia.org/wiki/Android_Jelly_Bean)
+> android version.
+
+----
+
 ***[Live Page](https://jxmked.github.io/Old-Creation/)***
 
 ----
